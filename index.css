@@ -1,0 +1,61 @@
+body {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+  }
+  label {display:block;}
+
+  textarea {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  div {
+    display:flex;
+    flex-direction:column;
+  }
+
+  p {
+    text-align: left;
+  }
+  input[type=number] {
+    width: 3em;
+  }
+
+  input[type=number]:read-only {
+    width:4em;
+  }
+
+  table {
+    text-align: center;
+    display: inline-block;
+  }
+
+  .cols {
+      display: flex;
+      flex-direction: row;
+  }
+
+  .rows {
+      display:flex;
+      flex-direction: column;
+  }
+  .hidden {
+      display: none;
+  }
+  .center {
+      align-items: center;
+      align-content: center;
+
+  }
+  .left {
+      align-content: left;
+  }
+  
+  form {
+    background-color: lightgray;
+    margin: 6px 0px 6px 0px;
+    padding:4px;
+    border: 2px solid black;
+  }
