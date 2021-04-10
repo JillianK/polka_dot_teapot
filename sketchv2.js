@@ -202,14 +202,12 @@ function goraudShader(tri,mat) {
             if (alpha >= 0 && beta >= 0 && gamma >= 0) {
                 let zPix = zAtPix(alpha, beta, gamma);
                 if (zPix < state.z[x + y * width]) {
-                    //const invz = 1/zPix;
                     /**@type {Color} */
                     let norm = vecAdd(
                         dVMultFn(alpha,[nx0,ny0,nz0]),
                         dVMultFn(beta,[nx1,ny1,nz1]),
                         dVMultFn(gamma,[nx2,ny2,nz2]));
                     norm = normalize(norm);
-                    //console.log(zPix,alpha,beta,gamma,u0,v0);
                     const [r,g,b] = state.computeColor(norm,
                         vecAdd(
                             dVMultFn(alpha,pos0),
@@ -238,12 +236,7 @@ var printSparse = 0;
  * @param {[number,number]} texture current texture coordinates
  */
 function computeColor(a_l, d_ls, mat,n,p,texture){
-
-    //const n = math.divide(_n,math.norm(_n));
-    //const p = math.divide(_p,math.norm(_p));
-
     //with ambience
-    // let color = [0,0,0];
     let color = [...a_l];
     for (let i =0; i < d_ls.length; i++) {
         // // N dot L
@@ -262,35 +255,20 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
         const s = dVMultFn(mat.Ks*S, d_ls[i].c);
         color = vecAdd(color,d,s);
     }
-    // if(printSparse++ % 500 ==0){
-
-    //     console.log(dVMultFn(255, VeMultFn(color,mat.Cs)),
-    //      math.chain(color)
-    //     .dotMultiply(mat.Cs)
-    //     .multiply(255)
-    //     .done());
-    // }
     color = vecAdd(color,getTexture(texture[0],texture[1]));
-    //console.log(color);
     return dVMultFn(255, VeMultFn(color,mat.Cs));
 }
 
 function getTexture(u,v,tmap){
-    //console.log(u,v)
     tmap = consts.texture.teapot1;
     const xLoc = (1-u)*(tmap.width-1);
     const yLoc = v*(tmap.height-1);
-
-    // if(u==1 || v==1){
-    //     console.log('u and v');
-    // }
 
     const xBase = Math.trunc(xLoc);
     const yBase = Math.trunc(yLoc);
 
     const xFrac = xLoc - xBase;
     const yFrac = yLoc - yBase;
-    //console.log(`${xFrac} ${yFrac}`)
 
     // xLocation,yLocation will be fractional, ie 100.26, 212.84,
     // and we need to compute its RGB there, taking 4 adjacent
@@ -304,18 +282,15 @@ function getTexture(u,v,tmap){
     // Given RGBs at p00, p10, p11 and p01, what is the blended (bi-lerped) RGB?
     // Look up how to do this :) Hint: you'd use 0..1 fractions (from xLocation and yLocation)
     // to perform three lerps (eg between (p00,p10), between (p01,p11), between those two results)
-    // See below :)
 
     // Given 'f' to be x fraction (ie xLocation - trunc(xLocation)) and 'g' to likewise be consolethe
     // y fraction, and given RGBs at p00, p10, p11, p01, the interps look like so:
-    const p0010RGB =  vecAdd(dVMultFn(xFrac,p10),dVMultFn(1-xFrac, p00));// f*p10 + (1-f)*p00 // [note - please rewrite such f 1-f formulae to use just one mult!]
-    const p0111RGB =  vecAdd(dVMultFn(xFrac,p11),dVMultFn(1-xFrac,p01))//f*p11RGB + (1-f)*p01RGB
-    const pOutputRGB = vecAdd(dVMultFn(yFrac,p0111RGB),dVMultFn(1-yFrac,p0010RGB))//yFrac*p0111RGB + (1-yFrac)*p0010RGB
+    const p0010RGB =  vecAdd(dVMultFn(xFrac,p10),dVMultFn(1-xFrac, p00));
+    const p0111RGB =  vecAdd(dVMultFn(xFrac,p11),dVMultFn(1-xFrac,p01));
+    const pOutputRGB = vecAdd(dVMultFn(yFrac,p0111RGB),dVMultFn(1-yFrac,p0010RGB));
     // as a quick check, if f=0, g=0 (we are exactly at the bottom-left pixel), we get
     //pOutputRGB != 0*p01RGB + 1*p00RGB = p00RGB
 
-    //console.log(p00,p11,p10,p01);
-    // console.log(`${pOutputRGB}`);
     return dVMultFn(1/255,pOutputRGB);
 }
 
@@ -338,7 +313,7 @@ function setupShaders(lights) {
     }
 
     const a_c = dVMultFn(ambient_light.intensity,ambient_light.color);
-    // console.log("Color",a_c)
+
     /**@type {{d:Vector3,c:Color}[]} */
     const d_ls = directional_lights.map(
         (_d) =>  {
@@ -393,8 +368,6 @@ function transformPosition(x, y, z, nx, ny, nz,tu,tv){
     let n = math.multiply(state.O2C_i_t, [[nx],[ny],[nz],[1]]);
     n = normalize(v4_2_v3(squeezeFn(n)));
 
-
-    //console.log(n,pCam);
     const [r,g,b] = state.computeColor(n, [x,y,z],[0,0]);
 
     return [v[0][0], v[1][0], v[2][0],n[0],n[1],n[2],r,g,b,tu,tv];
@@ -506,14 +479,6 @@ function getRotationMatrix(Dx, Dy, Dz) {
     return Rmatrix
 }
 
-// ia ambient intensity
-// function shade(ia, ka, lights, camera, normal){
-//   let s  = ia*ka;
-//   for(let light in lights){
-
-//   }
-// }
-
 /**
 *
 * @param {Shape} shape
@@ -532,11 +497,7 @@ function drawObject(shape) {
     const RMatrix = getRotationMatrix(Rx, Ry, Rz);
     const SMatrix = getScaleMatrix(...S);
     const SRMatrix = math.multiply(SMatrix,RMatrix);
-    // const renderMatrix = math.chain(state.W2NDC).multiply(TMatrix).multiply(SRMatrix).done();
 
-    // state.SR_i_t = math.chain(state.cam).multiply(math.chain(SMatrix).inv().transpose().done()).multiply(RMatrix).done();
-    // console.log(state.SR_i_t);
-    // state.W2NDCR = renderMatrix;
     state.O2C = math.chain(state.cam).multiply(TMatrix).multiply(SRMatrix).done();
     state.O2C_i_t = math.chain(getRotationMatrix(-Rx,-Ry,-Rz)).multiply(math.divide(1,SMatrix)).multiply(math.inv(state.cam)).transpose().done();
     state.O2W = math.chain(TMatrix).multiply(SRMatrix).done();
@@ -546,13 +507,8 @@ function drawObject(shape) {
 
     state.computeColor = (norm,pos,texture) => state.computeColorBase(shape.material,norm,pos,texture)
 
-    // console.log(shape.material);
-    // let sparsity = 0;
     for (let triangle of triangles) {
-        //const tri = transformTriangle(JSON.parse(JSON.stringify(triangle)));
-        // if (sparsity %5 ==0){
-        state.myshader(JSON.parse(JSON.stringify(triangle)), shape.material);//},ind*10);
-        // }
+        state.myshader(JSON.parse(JSON.stringify(triangle)), shape.material);
     }
 }
 
@@ -725,25 +681,6 @@ function v4_2_v3 (v) {
 }
 
 /***************************************** */
-
-
-// const _persp1 = /* near=1, far = 100 */
-//   (left,right,bottom,top, near, far) => {
-//     const n2 = 2*near;
-//     const fpn = far+near;
-//     const fmn = far-near;
-//     const rml = right-left;
-//     const rpl = right+left;
-//     const tmb = top-bottom;
-//     const tpb = top+bottom;
-//     return math.matrix(
-//     [
-//       [n2/rml , 0       ,  0, rpl/rml],
-//       [0      , n2/tmb  ,  0, tpb/tmb],
-//       [0      , 0       , -fpn/fmn, -far*n2 / fmn],
-//       [0      , 0       , -1      , 0]
-//     ]
-//   )};
 
 
 //-----------------------------------TYPES
