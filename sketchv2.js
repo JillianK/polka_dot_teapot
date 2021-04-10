@@ -3,8 +3,8 @@ var state = {
 }
 
 /**
- * 
- * @param {Camera} camera 
+ *
+ * @param {Camera} camera
  */
 function setupScene(camera) {
     let [resX, resY] = camera.resolution;
@@ -20,15 +20,15 @@ function setupScene(camera) {
     state.persp = perspMatrix;
     state.W2NDC = W2NDC;
 
-    _.createCanvas(resX, resY);
+    createCanvas(resX, resY);
     pixelDensity(1);
     console.log("Finished setup");
 }
 
 
 /**
- * 
- * @param {Triangle} tri 
+ *
+ * @param {Triangle} tri
  * @param {Material} mat
  */
 function defaultShader(tri,mat) {
@@ -67,7 +67,7 @@ function defaultShader(tri,mat) {
             const alpha = f12(x, y) / alpha0;
             const beta = f20(x, y) / beta0;
             const gamma = f01(x, y) / gamma0;
-            
+
             if (alpha >= 0 && beta >= 0 && gamma >= 0) {
                 let zPix = zAtPix(alpha, beta, gamma);
                 if (zPix < state.z[x + y * width]) {
@@ -87,8 +87,8 @@ function defaultShader(tri,mat) {
 
 
 /**
- * 
- * @param {Triangle} tri 
+ *
+ * @param {Triangle} tri
  * @param {Material} mat
  */
 function goraudShader(tri,mat) {
@@ -131,7 +131,7 @@ function goraudShader(tri,mat) {
             const alpha = f12(x, y) / alpha0;
             const beta = f20(x, y) / beta0;
             const gamma = f01(x, y) / gamma0;
-            
+
             if (alpha >= 0 && beta >= 0 && gamma >= 0) {
                 let zPix = zAtPix(alpha, beta, gamma);
                 if (zPix < state.z[x + y * width]) {
@@ -155,8 +155,8 @@ function goraudShader(tri,mat) {
 }
 
 /**
- * 
- * @param {Triangle} tri 
+ *
+ * @param {Triangle} tri
  */
  function phongShader(tri) {
     const pos0 = tri[0].slice(0,3);
@@ -198,7 +198,7 @@ function goraudShader(tri,mat) {
             const alpha = f12(x, y) / alpha0;
             const beta = f20(x, y) / beta0;
             const gamma = f01(x, y) / gamma0;
-            
+
             if (alpha >= 0 && beta >= 0 && gamma >= 0) {
                 let zPix = zAtPix(alpha, beta, gamma);
                 if (zPix < state.z[x + y * width]) {
@@ -214,7 +214,7 @@ function goraudShader(tri,mat) {
                         vecAdd(
                             dVMultFn(alpha,pos0),
                             dVMultFn(beta,pos1),
-                            dVMultFn(gamma,pos2)), 
+                            dVMultFn(gamma,pos2)),
                         [
                             (alpha*u0/z0+beta*u1/z1+gamma*u2/z2)*zPix,
                             (alpha*v0/z0+beta*v1/z1+gamma*v2/z2)*zPix
@@ -240,7 +240,7 @@ var printSparse = 0;
 function computeColor(a_l, d_ls, mat,n,p,texture){
 
     //const n = math.divide(_n,math.norm(_n));
-    //const p = math.divide(_p,math.norm(_p));     
+    //const p = math.divide(_p,math.norm(_p));
 
     //with ambience
     // let color = [0,0,0];
@@ -250,8 +250,8 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
         const ln = Math.max(0,math.abs(math.dot(n, d_ls[i].d)));
         //diffusion
         const d = dVMultFn(mat.Kd * ln,d_ls[i].c);
-        
-        //specular        
+
+        //specular
         let V = math.subtract([0,0,1],p);
         V = normalize(V);
 
@@ -264,7 +264,7 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
     }
     // if(printSparse++ % 500 ==0){
 
-    //     console.log(dVMultFn(255, VeMultFn(color,mat.Cs)), 
+    //     console.log(dVMultFn(255, VeMultFn(color,mat.Cs)),
     //      math.chain(color)
     //     .dotMultiply(mat.Cs)
     //     .multiply(255)
@@ -280,7 +280,7 @@ function getTexture(u,v,tmap){
     tmap = consts.texture.teapot1;
     const xLoc = (1-u)*(tmap.width-1);
     const yLoc = v*(tmap.height-1);
-    
+
     // if(u==1 || v==1){
     //     console.log('u and v');
     // }
@@ -292,43 +292,43 @@ function getTexture(u,v,tmap){
     const yFrac = yLoc - yBase;
     //console.log(`${xFrac} ${yFrac}`)
 
-    // xLocation,yLocation will be fractional, ie 100.26, 212.84, 
+    // xLocation,yLocation will be fractional, ie 100.26, 212.84,
     // and we need to compute its RGB there, taking 4 adjacent
-    // pixels at xLocation,yLocation and linearly blending their RGBs: 
+    // pixels at xLocation,yLocation and linearly blending their RGBs:
     const p00 = tmap.get(xBase,yBase).slice(0,3);     // bottom-left
     const p11 = tmap.get(1+xBase,1+yBase).slice(0,3); // top-right (diagonal)
     const p10 = tmap.get(1+xBase,yBase).slice(0,3);   // to the right of p00
     const p01 = tmap.get(xBase,1+yBase).slice(0,3);   // to the top of p00
-    
+
 
     // Given RGBs at p00, p10, p11 and p01, what is the blended (bi-lerped) RGB?
     // Look up how to do this :) Hint: you'd use 0..1 fractions (from xLocation and yLocation)
     // to perform three lerps (eg between (p00,p10), between (p01,p11), between those two results)
     // See below :)
 
-    // Given 'f' to be x fraction (ie xLocation - trunc(xLocation)) and 'g' to likewise be consolethe 
+    // Given 'f' to be x fraction (ie xLocation - trunc(xLocation)) and 'g' to likewise be consolethe
     // y fraction, and given RGBs at p00, p10, p11, p01, the interps look like so:
     const p0010RGB =  vecAdd(dVMultFn(xFrac,p10),dVMultFn(1-xFrac, p00));// f*p10 + (1-f)*p00 // [note - please rewrite such f 1-f formulae to use just one mult!]
     const p0111RGB =  vecAdd(dVMultFn(xFrac,p11),dVMultFn(1-xFrac,p01))//f*p11RGB + (1-f)*p01RGB
-    const pOutputRGB = vecAdd(dVMultFn(yFrac,p0111RGB),dVMultFn(1-yFrac,p0010RGB))//yFrac*p0111RGB + (1-yFrac)*p0010RGB 
+    const pOutputRGB = vecAdd(dVMultFn(yFrac,p0111RGB),dVMultFn(1-yFrac,p0010RGB))//yFrac*p0111RGB + (1-yFrac)*p0010RGB
     // as a quick check, if f=0, g=0 (we are exactly at the bottom-left pixel), we get
     //pOutputRGB != 0*p01RGB + 1*p00RGB = p00RGB
-    
+
     //console.log(p00,p11,p10,p01);
     // console.log(`${pOutputRGB}`);
     return dVMultFn(1/255,pOutputRGB);
 }
 
 /**
- * 
- * @param {Light[]} lights 
+ *
+ * @param {Light[]} lights
  */
 function setupShaders(lights) {
     /**@type {AmbientLight} */
     let ambient_light;
     /**@type {DirectionalLight[]} */
     let directional_lights = [];
-    
+
     for(let light of lights){
         if (light.type === 'ambient'){
             ambient_light = light;
@@ -353,14 +353,14 @@ function setupShaders(lights) {
 }
 
 /**
- * 
- * @param {number} left 
- * @param {number} right 
- * @param {number} bottom 
- * @param {number} top 
- * @param {number} near 
- * @param {number} far 
- * @returns 
+ *
+ * @param {number} left
+ * @param {number} right
+ * @param {number} bottom
+ * @param {number} top
+ * @param {number} near
+ * @param {number} far
+ * @returns
  */
 function getPerspectiveMatrix(near,far, left, right, top, bottom) {
     const n2 = 2 * near;
@@ -401,8 +401,8 @@ function transformPosition(x, y, z, nx, ny, nz,tu,tv){
 }
 
 /**
- * 
- * @param {number} x 
+ *
+ * @param {number} x
  * @returns {number}
  */
 function width_helper(x) {
@@ -410,8 +410,8 @@ function width_helper(x) {
 }
 
 /**
- * 
- * @param {number} y 
+ *
+ * @param {number} y
  * @returns {number}
  */
 function height_helper(y) {
@@ -419,13 +419,13 @@ function height_helper(y) {
 }
 
 /**
-* 
-* @param {number} x 
-* @param {number} y 
-* @param {number} r 
-* @param {number} g 
-* @param {number} b 
-* @param {number} a 
+*
+* @param {number} x
+* @param {number} y
+* @param {number} r
+* @param {number} g
+* @param {number} b
+* @param {number} a
 */
 function setPixel(x, y, r, g, b, a) {
     const index = 4 * (x + y * width);
@@ -436,9 +436,9 @@ function setPixel(x, y, r, g, b, a) {
 }
 
 /**
- * 
- * @param {string} txt 
- * @returns 
+ *
+ * @param {string} txt
+ * @returns
  */
 function processText(txt) {
     let lines = txt.trim().split('\n');
@@ -454,10 +454,10 @@ function processText(txt) {
 }
 
 /**
- * 
- * @param {number} x 
- * @param {number} y 
- * @param {number} z 
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
  * @returns {Matrix}
  */
 function getTranslationMatrix(x, y, z) {
@@ -470,10 +470,10 @@ function getTranslationMatrix(x, y, z) {
 }
 
 /**
- * 
- * @param {number} x 
- * @param {number} y 
- * @param {number} z 
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
  * @returns {Matrix}
  */
 function getScaleMatrix(x, y, z) {
@@ -486,10 +486,10 @@ function getScaleMatrix(x, y, z) {
 }
 
 /**
- * 
- * @param {number} Rx 
- * @param {number} Ry 
- * @param {number} Rz 
+ *
+ * @param {number} Rx
+ * @param {number} Ry
+ * @param {number} Rz
  * @returns {Matrix}
  */
 function getRotationMatrix(Dx, Dy, Dz) {
@@ -515,8 +515,8 @@ function getRotationMatrix(Dx, Dy, Dz) {
 // }
 
 /**
-* 
-* @param {Shape} shape 
+*
+* @param {Shape} shape
 */
 function drawObject(shape) {
     let Rx = 0, Ry = 0, Rz = 0, S = [1, 1, 1], T = [0, 0, 0];
@@ -533,7 +533,7 @@ function drawObject(shape) {
     const SMatrix = getScaleMatrix(...S);
     const SRMatrix = math.multiply(SMatrix,RMatrix);
     // const renderMatrix = math.chain(state.W2NDC).multiply(TMatrix).multiply(SRMatrix).done();
-    
+
     // state.SR_i_t = math.chain(state.cam).multiply(math.chain(SMatrix).inv().transpose().done()).multiply(RMatrix).done();
     // console.log(state.SR_i_t);
     // state.W2NDCR = renderMatrix;
@@ -557,10 +557,10 @@ function drawObject(shape) {
 }
 
 /**
-* 
-* @param {Vector3} cam 
-* @param {Vector3} origin 
-* @returns 
+*
+* @param {Vector3} cam
+* @param {Vector3} origin
+* @returns
 */
 function getCameraMatrix(cam, origin) {
     let n0 = math.subtract(cam, origin);
@@ -581,8 +581,8 @@ function getCameraMatrix(cam, origin) {
 }
 
 /**
-* 
-* @param {Shape[]} shapes 
+*
+* @param {Shape[]} shapes
 */
 function renderScene(shapes) {
     console.log("Rendering scene",shapes);
@@ -608,7 +608,7 @@ function preload(){
     );
 }
 
-function setup(){    
+function setup(){
     geometries["teapot"] = processText(consts.geos.teapot);
     geometries["triangle"] = processText(consts.geos.triangle);
     state.myshader = phongShader; // phong goraud default
@@ -625,7 +625,7 @@ function myredraw(){
     redraw();
 }
 
-function draw(){  
+function draw(){
     let scene = state.scene;
     console.log(scene.scene);
     const start = Date.now();
@@ -652,8 +652,8 @@ function normFn(arr){
 
 /**
  * distributive vector multiplication
- * @param {number} x 
- * @param {number[]} v 
+ * @param {number} x
+ * @param {number[]} v
  * @returns {number[]}
  */
 function dVMultFn(x,v){
@@ -666,8 +666,8 @@ function dVMultFn(x,v){
 
 /**
  * elementwise vector multiplication
- * @param {number[]} v1 
- * @param {number[]} v2 
+ * @param {number[]} v1
+ * @param {number[]} v2
  * @returns {number[]}
  */
 function VeMultFn(v1,v2){
@@ -686,8 +686,8 @@ function dotFn(v1, v2){
     return s;
 }
 
-/** 
- * @param {*[]} arr 
+/**
+ * @param {*[]} arr
  * */
 function normalize(arr){
     let s = 0;
@@ -743,7 +743,7 @@ function v4_2_v3 (v) {
 //       [0      , 0       , -fpn/fmn, -far*n2 / fmn],
 //       [0      , 0       , -1      , 0]
 //     ]
-//   )};  
+//   )};
 
 
 //-----------------------------------TYPES
@@ -762,7 +762,7 @@ function v4_2_v3 (v) {
  * @typedef {Directional & {resolution:Vector3,bounds:number[]}} Camera
  * @typedef {{scene:Scene}} SceneObj
  */
- /** 
+ /**
   * @typedef {Object} Directional
   * @property {Vector3} from
   * @property {Vector3} to
