@@ -136,15 +136,19 @@ function goraudShader(tri,mat) {
                 let zPix = zAtPix(alpha, beta, gamma);
                 if (zPix < state.z[x + y * width]) {
                     /**@type {Color} */
-                    const [r,g,b] = math.chain(c0)
-                        .multiply(alpha)
-                        .add(math.multiply(beta, c1))
-                        .add(math.multiply(gamma, c2))
-                        .add(dVMultFn(255,getTexture(
-                            (alpha*u0/z0+beta*u1/z1+gamma*u2/z2)*zPix,
-                            (alpha*v0/z0+beta*v1/z1+gamma*v2/z2)*zPix
-                        )))
-                        .done();
+                    // const [r,g,b] = math.chain(c0)
+                    //     .multiply(alpha)
+                    //     .add(math.multiply(beta, c1))
+                    //     .add(math.multiply(gamma, c2))
+                    //     .add(dVMultFn(255,getTexture(
+                    //         (alpha*u0/z0+beta*u1/z1+gamma*u2/z2)*zPix,
+                    //         (alpha*v0/z0+beta*v1/z1+gamma*v2/z2)*zPix
+                    //     )))
+                    //     .done();
+                    const [r, g, b] = dVMultFn(255, getTexture(
+                                (alpha*u0/z0+beta*u1/z1+gamma*u2/z2)*zPix,
+                                (alpha*v0/z0+beta*v1/z1+gamma*v2/z2)*zPix
+                            ));
 
                     setPixel(x, y, r, g, b, 255);
                     state.z[x + y * width] = zPix;
@@ -261,8 +265,8 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
 
 function getTexture(u,v,tmap){
     tmap = consts.texture.teapot1;
-    const xLoc = (1-u)*(tmap.width-1);
-    const yLoc = v*(tmap.height-1);
+    const xLoc = (1-u)*(tmap[0].length-2);
+    const yLoc = v*(tmap.length-2);
 
     const xBase = Math.trunc(xLoc);
     const yBase = Math.trunc(yLoc);
@@ -273,10 +277,10 @@ function getTexture(u,v,tmap){
     // xLocation,yLocation will be fractional, ie 100.26, 212.84,
     // and we need to compute its RGB there, taking 4 adjacent
     // pixels at xLocation,yLocation and linearly blending their RGBs:
-    const p00 = tmap.get(xBase,yBase).slice(0,3);     // bottom-left
-    const p11 = tmap.get(1+xBase,1+yBase).slice(0,3); // top-right (diagonal)
-    const p10 = tmap.get(1+xBase,yBase).slice(0,3);   // to the right of p00
-    const p01 = tmap.get(xBase,1+yBase).slice(0,3);   // to the top of p00
+    const p00 = tmap[xBase][yBase].slice(0, 3);// bottom-left
+    const p11 = tmap[1+xBase][1+yBase].slice(0, 3);// top-right (diagonal)
+    const p10 = tmap[1+xBase][yBase].slice(0, 3);// to the right of p00
+    const p01 = tmap[xBase][1+yBase].slice(0, 3);// to the top of p00
 
 
     // Given RGBs at p00, p10, p11 and p01, what is the blended (bi-lerped) RGB?
@@ -556,12 +560,7 @@ function renderScene(shapes) {
 var geometries = {};
 
 function preload(){
-    loadImage(
-    //'https://th.bing.com/th/id/R437375a441f14bf1e2157204e6f6d0b8?rik=mKm79ueelonvyw&riu=http%3a%2f%2f3.bp.blogspot.com%2f-f0rZnopfgIs%2fTZjAqNx8HBI%2fAAAAAAAAAGw%2fxzST5LoV2o4%2fs1600%2fusc.jpg&ehk=G8eosq3gG9p18l4lM1L%2bp%2b8j8%2fKkTm0Vs0pitIL14vQ%3d&risl=&pid=ImgRaw',
-    //'https://th.bing.com/th/id/Rb6f389915e8b278e1fa1cbb14d07381f?rik=QZovV6KJ7h%2byKw&riu=http%3a%2f%2fviterbivoices.usc.edu%2fwp-content%2fuploads%2f2013%2f04%2fusc-shield.jpg&ehk=RVgW%2fgwrEI3Ra8GSsnhvnEfA%2fabDbeuiJ4qKCyrgOOg%3d&risl=&pid=ImgRawg',
-    'https://th.bing.com/th/id/R1219ecd08aad4d881c9b9f2b59b1d7f6?rik=%2bYVYlooD5gi45Q&riu=http%3a%2f%2feskipaper.com%2fimages%2fusc-logo-wallpaper-1.jpg&ehk=EQxcPWEYQ96rYYFfkrOcF0h97Vj1IQG0MzntTaSIKlk%3d&risl=&pid=ImgRaw',
-    (img)=>{consts.texture.teapot1=img}
-    );
+    consts.texture.teapot1 = getDots();
 }
 
 function setup(){
