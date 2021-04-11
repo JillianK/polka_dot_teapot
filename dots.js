@@ -280,28 +280,26 @@ function horizontal(X1, X2, Y1, r, g, b) {
 function drawCircle(radius, centerx, centery, r, g, b) {
   let x = radius;
   let y = 0;
-  let delta = 1 - x;
-  let step = 0.5
-  
-  while (x >= y) {
+  let e = 0;
+  let step = 0.5;
+
+  while(x >= y) {
     drawLine(centerx, centery, x + centerx, y + centery, r, g, b);
     drawLine(centerx, centery, y + centerx, x + centery, r, g, b);
-    drawLine(centerx, centery, -x + centerx, y + centery, r, g, b);
-    drawLine(centerx, centery, -y + centerx, x + centery, r, g, b);
-    drawLine(centerx, centery, -x + centerx, -y + centery, r, g, b);
-    drawLine(centerx, centery, -y + centerx, -x + centery, r, g, b);
-    drawLine(centerx, centery, x + centerx, -y + centery, r, g, b);
-    drawLine(centerx, centery, y + centerx, -x + centery, r, g, b);
-    y = y +step;
-    
-    if (delta < 0) {
-        delta = delta+(2*y+1);
+    drawLine(centerx, centery, -1*x + centerx, y + centery, r, g, b);
+    drawLine(centerx, centery, -1*y + centerx, x + centery, r, g, b);
+    drawLine(centerx, centery, -1*x + centerx, -1*y + centery, r, g, b);
+    drawLine(centerx, centery, -1*y + centerx, -1*x + centery, r, g, b);
+    drawLine(centerx, centery, x + centerx, -1*y + centery, r, g, b);
+    drawLine(centerx, centery, y + centerx, -1*x + centery, r, g, b);
+    if (e <= 0) {
+      y+=step;
+      e+= (2*y+1);
+    } else {
+      x-=step;
+      e-= (2*x+1);
     }
-    else {
-        x-=step;
-        delta = delta+(2*(y-x+1));
-    }
-  } 
+  }
 }
 
 function setTextureMapPixel(x, y, rr, gg, bb) {
