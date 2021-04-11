@@ -54,7 +54,10 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
         const s = dVMultFn(mat.Ks*S, d_ls[i].c);
         color = vecAdd(color,d,s);
     }
-    color = vecAdd(color,getTexture(texture[0],texture[1]));
+    if(texture){
+        const tex = getTexture(texture[0],texture[1]);
+        color = vecAdd(color,tex);
+    }
     return dVMultFn(255, VeMultFn(color,mat.Cs));
 }
 
@@ -167,7 +170,7 @@ function transformPosition(x, y, z, nx, ny, nz,tu,tv){
     let n = math.multiply(state.O2C_i_t, [[nx],[ny],[nz],[1]]);
     n = normalize(v4_2_v3(squeezeFn(n)));
 
-    const [r,g,b] = state.computeColor(n, [x,y,z],[0,0]);
+    const [r,g,b] = state.computeColor(n, [v[0][0], v[1][0], v[2][0]]);
 
     return [v[0][0], v[1][0], v[2][0],n[0],n[1],n[2],r,g,b,tu,tv];
 }
