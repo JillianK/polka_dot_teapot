@@ -1,13 +1,21 @@
 let sz = 512;
 let txtmap;
-let minsize = 30;
-let maxsize = 70;
-let paddingFactor = 5;
 let pixelSparsenessFactor = 0.4;
+let minamountofcirclesontexturemap = 2;
+// this is the MAX max size we should allow a user to pick for the circles, 
+// otherwise they will overflow onto the next texture map
+// taken into account the parameters such as pixelsparseness factor
+// so we can choose what is the minimum number of circles to include on the texture map
+let maxsizetoavoidoverflow = sz*pixelSparsenessFactor/minamountofcirclesontexturemap;
+let minsize = 10;
+let maxsize = maxsizetoavoidoverflow;
+let paddingFactor = 5;
 let colorList = [
     [170, 93, 212],
     [214, 84, 179],
-    [255, 156, 102]
+    [255, 156, 102],
+    [52,77,235],
+    [112,225,4]
 ]
 
 let txtmp;
