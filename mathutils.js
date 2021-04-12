@@ -1,3 +1,97 @@
+/**
+ * Scale [-1,1] to [0,width)
+ * @param {number} x
+ * @returns {number}
+ */
+ function width_helper(x) {
+    return Math.round((x + 1) * (width - 1) / 2);
+}
+
+/**
+ * Scale [-1,1] to [0,height)
+ * @param {number} y
+ * @returns {number}
+ */
+function height_helper(y) {
+    return Math.round((y + 1) * (height - 1) / 2);
+}
+
+/*** REQUIRED MATRIX OPERATIONS ***/
+
+/**
+* @param {Vector3} cam
+* @param {Vector3} origin
+* @returns
+*/
+function getCameraMatrix(cam, origin) {
+    let n0 = math.subtract(cam, origin);
+    let r = cam;
+    let n = normalize(n0);
+    let u = math.cross([0, 1, 0], n);
+    u = math.divide(u, math.norm(u))
+    let v = math.cross(n, u);
+    v = normalize(v);
+
+    const camera_matrix_helper = (a) => [a[0], a[1], a[2], -dotFn(r,a)]
+    return [
+                camera_matrix_helper(u),
+                camera_matrix_helper(v),
+                camera_matrix_helper(n),
+                [0, 0, 0, 1]
+            ];
+}
+
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ * @returns {Matrix}
+ */
+ function getTranslationMatrix(x, y, z) {
+    return [
+        [1, 0, 0, x],
+        [0, 1, 0, y],
+        [0, 0, 1, z],
+        [0, 0, 0, 1]
+    ]
+}
+
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ * @returns {Matrix}
+ */
+function getScaleMatrix(x, y, z) {
+    return [
+        [x, 0, 0, 0],
+        [0, y, 0, 0],
+        [0, 0, z, 0],
+        [0, 0, 0, 1]
+    ]
+}
+
+/**
+ * @param {number} Rx
+ * @param {number} Ry
+ * @param {number} Rz
+ * @returns {Matrix}
+ */
+function getRotationMatrix(Dx, Dy, Dz) {
+    const Rx = Math.PI / 180 * Dx;
+    const Ry = Math.PI / 180 * Dy;
+    const Rz = Math.PI / 180 * Dz;
+    const [cosa, sina, cosb, sinb, cosc, sinc] = [Math.cos(Rz), Math.sin(Rz), Math.cos(Ry), Math.sin(Ry), Math.cos(Rx), Math.sin(Rx)];
+    /** @type {Matrix} */
+    const Rmatrix = [
+        [cosa * cosb, cosa * sinb * sinc - sina * cosc, cosa * sinb * cosc + sina * sinc, 0],
+        [sina * cosb, sina * sinb * sinc + cosa * cosc, sina * sinb * cosc - cosa * sinc, 0],
+        [-sinb      , cosb * sinc                     , cosb * cosc, 0],
+        [0, 0, 0, 1]];
+    return Rmatrix
+}
+
+/*** BASIC MATH FUNCTIONS ***/
 
 /**
  * Get the vector norm of array `arr`

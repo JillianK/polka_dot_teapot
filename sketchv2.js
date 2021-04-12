@@ -61,6 +61,13 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
     return dVMultFn(255, VeMultFn(color,mat.Cs));
 }
 
+/**
+ * Retrieves texture from currrent texture map in tmap from texture coordinate u,v
+ * @param {number} u 
+ * @param {number} v 
+ * @param {number[][][]} tmap Dimensions of w x h x 3 
+ * @returns 
+ */
 function getTexture(u,v,tmap){
     tmap = consts.texture.teapot1;
     const xLoc = (1-u)*(tmap[0].length-2);
@@ -159,7 +166,9 @@ function getPerspectiveMatrix(near,far, left, right, top, bottom) {
         ];
 };
 
-/** */
+/** 
+ * Given Object positions normals and texture coordinates, output NDC position, NDC normal, color and texture coordinates
+*/
 function transformPosition(x, y, z, nx, ny, nz,tu,tv){
     let pos0 = [[x], [y], [z], [1]];
     let pCam = math.multiply(state.O2C, pos0);
@@ -173,24 +182,6 @@ function transformPosition(x, y, z, nx, ny, nz,tu,tv){
     const [r,g,b] = state.computeColor(n, [v[0][0], v[1][0], v[2][0]]);
 
     return [v[0][0], v[1][0], v[2][0],n[0],n[1],n[2],r,g,b,tu,tv];
-}
-
-/**
- *
- * @param {number} x
- * @returns {number}
- */
-function width_helper(x) {
-    return Math.round((x + 1) * (width - 1) / 2);
-}
-
-/**
- *
- * @param {number} y
- * @returns {number}
- */
-function height_helper(y) {
-    return Math.round((y + 1) * (height - 1) / 2);
 }
 
 /**
@@ -229,59 +220,6 @@ function processText(txt) {
 }
 
 /**
- *
- * @param {number} x
- * @param {number} y
- * @param {number} z
- * @returns {Matrix}
- */
-function getTranslationMatrix(x, y, z) {
-    return [
-        [1, 0, 0, x],
-        [0, 1, 0, y],
-        [0, 0, 1, z],
-        [0, 0, 0, 1]
-    ]
-}
-
-/**
- *
- * @param {number} x
- * @param {number} y
- * @param {number} z
- * @returns {Matrix}
- */
-function getScaleMatrix(x, y, z) {
-    return [
-        [x, 0, 0, 0],
-        [0, y, 0, 0],
-        [0, 0, z, 0],
-        [0, 0, 0, 1]
-    ]
-}
-
-/**
- *
- * @param {number} Rx
- * @param {number} Ry
- * @param {number} Rz
- * @returns {Matrix}
- */
-function getRotationMatrix(Dx, Dy, Dz) {
-    const Rx = Math.PI / 180 * Dx;
-    const Ry = Math.PI / 180 * Dy;
-    const Rz = Math.PI / 180 * Dz;
-    const [cosa, sina, cosb, sinb, cosc, sinc] = [Math.cos(Rz), Math.sin(Rz), Math.cos(Ry), Math.sin(Ry), Math.cos(Rx), Math.sin(Rx)];
-    /** @type {Matrix} */
-    const Rmatrix = [
-        [cosa * cosb, cosa * sinb * sinc - sina * cosc, cosa * sinb * cosc + sina * sinc, 0],
-        [sina * cosb, sina * sinb * sinc + cosa * cosc, sina * sinb * cosc - cosa * sinc, 0],
-        [-sinb      , cosb * sinc                     , cosb * cosc, 0],
-        [0, 0, 0, 1]];
-    return Rmatrix
-}
-
-/**
 *
 * @param {Shape} shape
 */
@@ -312,30 +250,6 @@ function drawObject(shape) {
     for (let triangle of triangles) {
         state.myshader(JSON.parse(JSON.stringify(triangle)), shape.material);
     }
-}
-
-/**
-*
-* @param {Vector3} cam
-* @param {Vector3} origin
-* @returns
-*/
-function getCameraMatrix(cam, origin) {
-    let n0 = math.subtract(cam, origin);
-    let r = cam;
-    let n = normalize(n0);
-    let u = math.cross([0, 1, 0], n);
-    u = math.divide(u, math.norm(u))
-    let v = math.cross(n, u);
-    v = normalize(v);
-
-    const camera_matrix_helper = (a) => [a[0], a[1], a[2], -dotFn(r,a)]
-    return [
-                camera_matrix_helper(u),
-                camera_matrix_helper(v),
-                camera_matrix_helper(n),
-                [0, 0, 0, 1]
-            ];
 }
 
 /**
