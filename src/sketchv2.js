@@ -39,20 +39,23 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
     let color = [...a_l];
     for (let i =0; i < d_ls.length; i++) {
         // // N dot L
-        const ln = Math.max(0,math.abs(math.dot(n, d_ls[i].d)));
+        const ln = Math.max(0,math.abs(dotFn(n, d_ls[i].d)));
         //diffusion
-        const d = dVMultFn(mat.Kd * ln,d_ls[i].c);
+        //const d = dVMultFn(,d_ls[i].c);
 
         //specular
-        let V = math.subtract([0,0,1],p);
-        V = normalize(V);
+        const V = normalizeMut([-p[0],-p[1],1-p[2]]);
 
-        let H = math.add(V,d_ls[i].d);
-        H = normalize(H);
+        const H = normalizeMut(vecAdd(V,d_ls[i].d));
+
         //Specularity
         const S = ln > 0? Math.pow(Math.max(0,dotFn(n,H)),mat.n): 0;
-        const s = dVMultFn(mat.Ks*S, d_ls[i].c);
-        color = vecAdd(color,d,s);
+        //const s = dVMultFn(mat.Ks*S, d_ls[i].c);
+        
+        //d+s
+        const colorMod = dVMultFn(mat.Kd*ln+mat.Ks*S, d_ls[i].c);
+
+        color = vecAdd(color, colorMod);
     }
     if(texture){
         const tex = getTexture(texture[0],texture[1],texture);
@@ -80,17 +83,17 @@ function getTexture(u,v,tmap){
 
     const xFrac = xLoc - xBase;
     const yFrac = yLoc - yBase;
-    if(tmap===undefined || tmap[xBase]===undefined || tmap[xBase][yBase]===undefined){
-        console.log(u,v,xBase,yBase,tmap.length, tmap[0].length);
-    }
+    // if(tmap===undefined || tmap[xBase]===undefined || tmap[xBase][yBase]===undefined){
+    //     console.log(u,v,xBase,yBase,tmap.length, tmap[0].length);
+    // }
 
     // xLocation,yLocation will be fractional, ie 100.26, 212.84,
     // and we need to compute its RGB there, taking 4 adjacent
     // pixels at xLocation,yLocation and linearly blending their RGBs:
-    const p00 = tmap[xBase][yBase].slice(0, 3);// bottom-left
-    const p11 = tmap[1+xBase][1+yBase].slice(0, 3);// top-right (diagonal)
-    const p10 = tmap[1+xBase][yBase].slice(0, 3);// to the right of p00
-    const p01 = tmap[xBase][1+yBase].slice(0, 3);// to the top of p00
+    const [p00x,p00y,p00z] = tmap[xBase][yBase];// bottom-left
+    const [p11x,p11y,p11z] = tmap[1+xBase][1+yBase];// top-right (diagonal)
+    const [p10x,p10y,p10z] = tmap[1+xBase][yBase];// to the right of p00
+    const [p01x,p01y,p01z] = tmap[xBase][1+yBase];// to the top of p00
 
 
     // Given RGBs at p00, p10, p11 and p01, what is the blended (bi-lerped) RGB?
@@ -99,46 +102,53 @@ function getTexture(u,v,tmap){
 
     // Given 'f' to be x fraction (ie xLocation - trunc(xLocation)) and 'g' to likewise be consolethe
     // y fraction, and given RGBs at p00, p10, p11, p01, the interps look like so:
-    const p0010RGB =  vecAdd(dVMultFn(xFrac,p10),dVMultFn(1-xFrac, p00));
-    const p0111RGB =  vecAdd(dVMultFn(xFrac,p11),dVMultFn(1-xFrac,p01));
-    const pOutputRGB = vecAdd(dVMultFn(yFrac,p0111RGB),dVMultFn(1-yFrac,p0010RGB));
+    // const p0010RGB =  vecAdd(dVMultFn(xFrac,p10),dVMultFn(1-xFrac, p00));
+    //const [p0010RGBx, p0010RGBy, p0010RGBz] =  [p00x + xFrac*(p10x-p00x), p00y + xFrac*(p10y-p00y), p00z + xFrac*(p10z-p00z)];
+    const p0010RGBx=p00x + xFrac*(p10x-p00x), p0010RGBy=p00y + xFrac*(p10y-p00y), p0010RGBz=p00z + xFrac*(p10z-p00z);
+    // const p0111RGB =  vecAdd(dVMultFn(xFrac,p11),dVMultFn(1-xFrac,p01));
+    // const [p0111RGBx,p0111RGBy,p0111RGBz] =  [p01x + xFrac*(p11x-p01x), p01y + xFrac*(p11y-p01y), p01z + xFrac*(p11z-p01z)];
+    const p0111RGBx=p01x + xFrac*(p11x-p01x), p0111RGBy=p01y + xFrac*(p11y-p01y), p0111RGBz=p01z + xFrac*(p11z-p01z);
+    // const pOutputRGB = vecAdd(dVMultFn(yFrac,p0111RGB),dVMultFn(1-yFrac,p0010RGB));
+    //const pOutputRGB = [p0010RGBx + yFrac*(p0111RGBx-p0010RGBx), p0010RGBy + yFrac*(p0111RGBy-p0010RGBy), p0010RGBz + yFrac*(p0111RGBz-p0010RGBz)];
     // as a quick check, if f=0, g=0 (we are exactly at the bottom-left pixel), we get
     //pOutputRGB != 0*p01RGB + 1*p00RGB = p00RGB
 
-    return dVMultFn(1/255,pOutputRGB);
+    //return dVMultFn(1/255,pOutputRGB);
+    return [
+        (p0010RGBx + yFrac*(p0111RGBx-p0010RGBx))/255,
+        (p0010RGBy + yFrac*(p0111RGBy-p0010RGBy))/255,
+        (p0010RGBz + yFrac*(p0111RGBz-p0010RGBz))/255
+    ]
 }
 
 /**
  *
  * @param {Light[]} lights
  */
-function setupShaders(lights) {
+function setupLighting(lights) {
     /**@type {AmbientLight} */
     let ambient_light;
-    /**@type {DirectionalLight[]} */
-    let directional_lights = [];
+    const directional_lights = [];
+
+    const get_light = (_d) => {
+        const d = math.multiply(state.cam,[[_d.to[0]-_d.from[0]],[_d.to[1]-_d.from[1]],[_d.to[2]-_d.from[2]],[1]]);
+        return {
+        "d": /** @type {Vector3}*/normalizeMut(v4_2_v3Mut(squeezeFn(d))),
+        "c": dVMultFn(_d.intensity,_d.color)
+        };
+    }
 
     for(let light of lights){
         if (light.type === 'ambient'){
             ambient_light = light;
         }else{
-            directional_lights.push(/**@type {DirectionalLight}*/light);
+            directional_lights.push(get_light(light));
         }
     }
 
     const a_c = dVMultFn(ambient_light.intensity,ambient_light.color);
 
-    /**@type {{d:Vector3,c:Color}[]} */
-    const d_ls = directional_lights.map(
-        (_d) =>  {
-            let dir = math.subtract(_d.to,_d.from);
-            dir = math.multiply(state.cam,[..._d.from.map(x=>[x]),[1]]);
-            return {
-            "d": /** @type {Vector3}*/normalize(v4_2_v3(squeezeFn(dir))),
-            "c": math.multiply(_d.color,_d.intensity)
-            };
-        });
-    state.computeColorBase = (mat,norm,pos,texture) => computeColor(a_c,d_ls,mat,norm,pos,texture);
+    state.computeColorBase = (mat,norm,pos,texture) => computeColor(a_c,directional_lights,mat,norm,pos,texture);
 }
 
 /**
@@ -284,7 +294,7 @@ function setup(){
     let scene = consts.scene;
     state.scene = scene;
     setupScene(scene.scene.camera);
-    setupShaders(scene.scene.lights);
+    setupLighting(scene.scene.lights);
 
     state.z = new Float32Array(width*height);
     state.z.fill(Number.POSITIVE_INFINITY);
@@ -296,7 +306,7 @@ function myredraw(){
     state.z.fill(Number.POSITIVE_INFINITY);
     state.fb.fill(0);
     setupScene(scene.scene.camera);
-    setupShaders(scene.scene.lights);
+    setupLighting(scene.scene.lights);
     redraw();
 }
 
