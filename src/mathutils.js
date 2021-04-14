@@ -122,6 +122,21 @@ function dVMultFn(x,v){
 }
 
 /**
+ * Element-wise vector multiplication
+ * i.e. x .* V
+ * @param {number} x
+ * @param {number[]} v
+ * @returns {number[]}
+ */
+ function dVMultFnMut(x,v){
+    let res = v.slice();
+    for(let i = 0; i < res.length; i++){
+        res[i] *= x;
+    }
+    return res;
+}
+
+/**
  * Elementwise vector multiplication given 2 vectors
  * i.e. V1 .* V2
  * @param {number[]} v1
@@ -170,6 +185,23 @@ function normalize(arr){
 }
 
 /**
+ * Get the unitized version of a vector as a mutation
+ * @param {number[]} arr
+ * @returns {number[]} 
+ * */
+function normalizeMut(arr){
+    let s = 0;
+    for(let i =0; i < arr.length; i++){
+        s += arr[i]*arr[i];
+    }
+    s = math.sqrt(s);
+    for(let i =0; i < arr.length; i++){
+        arr[i] /= s;
+    }
+    return arr;
+}
+
+/**
  * Squeeze a multidimensional array into 1 dimension
  * Essentially a transpose
  * @param {number[][]} arr 
@@ -206,4 +238,17 @@ function v4_2_v3 (v) {
         v3[i] /= v[3];
     }
     return v3;
+}
+
+/**
+ * V[0:3]/V[3]
+ * @param {number[]} v 
+ * @returns {number[]}
+ */
+ function v4_2_v3Mut (v) {
+    let v3 = v.pop();
+    for (let i =0; i < 3; i++){
+        v[i] /= v3;
+    }
+    return v;
 }
