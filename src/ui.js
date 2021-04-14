@@ -210,7 +210,6 @@ function updateCamera() {
 
 
 function changeShader(e) {
-  e.preventDefault();
   /** @type {HTMLFormElement} */
   const form = (document.getElementById("shader"));
   switch (form.elements["shader"].value) {
