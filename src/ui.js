@@ -243,8 +243,6 @@ function switchRemoteMode() {
 }
 
 function remote(button) {
-  console.log(remoteControls);
-  console.log(remoteControls.st)
   remoteControls[remoteControls.state][button]();
   myredraw();
 }
