@@ -55,7 +55,7 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
         color = vecAdd(color,d,s);
     }
     if(texture){
-        const tex = getTexture(texture[0],texture[1]);
+        const tex = getTexture(texture[0],texture[1],texture);
         color = vecAdd(color,tex);
     }
     return dVMultFn(255, VeMultFn(color,mat.Cs));
@@ -69,6 +69,8 @@ function computeColor(a_l, d_ls, mat,n,p,texture){
  * @returns 
  */
 function getTexture(u,v,tmap){
+    u = Math.min(u,1);
+    v = Math.min(v,1);
     tmap = consts.texture.teapot1;
     const xLoc = (1-u)*(tmap[0].length-2);
     const yLoc = v*(tmap.length-2);
@@ -78,6 +80,9 @@ function getTexture(u,v,tmap){
 
     const xFrac = xLoc - xBase;
     const yFrac = yLoc - yBase;
+    if(tmap===undefined || tmap[xBase]===undefined || tmap[xBase][yBase]===undefined){
+        console.log(u,v,xBase,yBase,tmap.length, tmap[0].length);
+    }
 
     // xLocation,yLocation will be fractional, ie 100.26, 212.84,
     // and we need to compute its RGB there, taking 4 adjacent
@@ -280,10 +285,16 @@ function setup(){
     state.scene = scene;
     setupScene(scene.scene.camera);
     setupShaders(scene.scene.lights);
+
+    state.z = new Float32Array(width*height);
+    state.z.fill(Number.POSITIVE_INFINITY);
+    state.fb = new Uint8ClampedArray(width*height*4);
 }
 
 function myredraw(){
     let scene = state.scene;
+    state.z.fill(Number.POSITIVE_INFINITY);
+    state.fb.fill(0);
     setupScene(scene.scene.camera);
     setupShaders(scene.scene.lights);
     redraw();
@@ -291,17 +302,12 @@ function myredraw(){
 
 function draw(){
     let scene = state.scene;
-    console.log(scene.scene);
+    //console.log(scene.scene);
     const start = Date.now();
-    setupScene(scene.scene.camera);
-    setupShaders(scene.scene.lights);
-    state.z = new Float32Array(width*height);
-    state.z.fill(Number.POSITIVE_INFINITY);
-    state.fb = new Uint8ClampedArray(width*height*4);
     background('lightgray');
     loadPixels();
     renderScene(scene.scene.shapes);
-    console.log("Rendered in: ", Date.now()- start);
+    console.log("Rendered in: ", Date.now() - start);
     updatePixels();
     noLoop();
 }

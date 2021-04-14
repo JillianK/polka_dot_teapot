@@ -3,7 +3,7 @@
  * @param {number} x
  * @returns {number}
  */
- function width_helper(x) {
+function width_helper(x) {
     return Math.round((x + 1) * (width - 1) / 2);
 }
 
@@ -47,7 +47,7 @@ function getCameraMatrix(cam, origin) {
  * @param {number} z
  * @returns {Matrix}
  */
- function getTranslationMatrix(x, y, z) {
+function getTranslationMatrix(x, y, z) {
     return [
         [1, 0, 0, x],
         [0, 1, 0, y],
