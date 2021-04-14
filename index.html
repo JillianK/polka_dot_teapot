@@ -15,16 +15,16 @@
   </header>
   <main></main>
   <div id="camera-remote-bar">
-    <form id="camera-remote">
-      <button class="control-left" name="l"><i class="bi bi-arrow-left"></i></button>
-      <button class="control-right" name="r"><i class="bi bi-arrow-right"></i></button>
-      <button class="control-center-left" name="cl"><i class="bi bi-dash"></i></button>
-      <button class="control-center-right" name="cr"><i class="bi bi-plus"></i></button>
-      <button class="control-up" name="u"><i class="bi bi-arrow-up"></i></button>
-      <button class="control-down" name="d"><i class="bi bi-arrow-down"></i></button>
-      <button class="control-turn-right" name="tr"><i class="bi bi-arrow-clockwise"></i></button>
-      <button class="control-turn-left" name="tl"><i class="bi bi-arrow-counterclockwise"></i></button>
-      <select class="control-mode" name="mode">
+    <form id="camera-remote" action="">
+      <button class="control-left" name="l" onclick="remote('left')"><i class="bi bi-arrow-left"></i></button>
+      <button class="control-right" name="r" onclick="remote('right')"><i class="bi bi-arrow-right"></i></button>
+      <button class="control-center-left" name="cl" onclick="remote('in')"><i class="bi bi-dash"></i></button>
+      <button class="control-center-right" name="cr" onclick="remote('out')"><i class="bi bi-plus"></i></button>
+      <button class="control-up" name="u" onclick="remote('up')"><i class="bi bi-arrow-up"></i></button>
+      <button class="control-down" name="d" onclick="remote('down')"><i class="bi bi-arrow-down"></i></button>
+      <button class="control-turn-right" name="tr" onclick="remote('left')"><i class="bi bi-arrow-clockwise"></i></button>
+      <button class="control-turn-left" name="tl" onclick="remote('left')"><i class="bi bi-arrow-counterclockwise"></i></button>
+      <select class="control-mode" name="mode" onchange="switchRemoteMode()">
         <option value="ROT">Rotation</option>
         <option value="TRN">Translation</option>
       </select>
