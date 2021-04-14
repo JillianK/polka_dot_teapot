@@ -280,10 +280,16 @@ function setup(){
     state.scene = scene;
     setupScene(scene.scene.camera);
     setupShaders(scene.scene.lights);
+
+    state.z = new Float32Array(width*height);
+    state.z.fill(Number.POSITIVE_INFINITY);
+    state.fb = new Uint8ClampedArray(width*height*4);
 }
 
 function myredraw(){
     let scene = state.scene;
+    state.z.fill(Number.POSITIVE_INFINITY);
+    state.fb.fill(0);
     setupScene(scene.scene.camera);
     setupShaders(scene.scene.lights);
     redraw();
@@ -291,17 +297,12 @@ function myredraw(){
 
 function draw(){
     let scene = state.scene;
-    console.log(scene.scene);
+    //console.log(scene.scene);
     const start = Date.now();
-    setupScene(scene.scene.camera);
-    setupShaders(scene.scene.lights);
-    state.z = new Float32Array(width*height);
-    state.z.fill(Number.POSITIVE_INFINITY);
-    state.fb = new Uint8ClampedArray(width*height*4);
     background('lightgray');
     loadPixels();
     renderScene(scene.scene.shapes);
-    console.log("Rendered in: ", Date.now()- start);
+    console.log("Rendered in: ", Date.now() - start);
     updatePixels();
     noLoop();
 }
