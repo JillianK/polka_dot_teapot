@@ -334,6 +334,9 @@ function getcolor(r0, g0, b0, r1, b1, g1, x0, y0, x1, y1, radius) {
 
 function setTextureMapPixelWithGradient(r0, g0, b0, r1, g1, b1, x0, y0, x, y, radius) {
   let color = getcolor(r0, g0, b0, r1, g1, b1, x0, y0, x, y, radius)
+  if (r0 == r1) {color[0] = r0;}
+  if (g0 == g1) {color[1] = g0;}
+  if (b0 == b1) {color[2] = b0;} 
   setTextureMapPixel(x, y, color[0], color[1], color[2]);
 }
 
