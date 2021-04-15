@@ -24,27 +24,27 @@ function preload() {
   inittxtmp()
 }
 
-function drawLine(X1, Y1, X2, Y2, r, g, b){
+function drawLine(X1, Y1, X2, Y2, r, g, b, r2, g2, b2, radius){
   if(Math.abs(X1-X2)<1) {
-    vertical(X1, Y1, Y2, r, g, b);
+    vertical(X1, Y1, Y2, r, g, b,r2, g2, b2, radius);
   }
   if(Math.abs(Y1-Y2)<2) {
-    horizontal(X1, X2, Y1, r, g, b);
+    horizontal(X1, X2, Y1, r, g, b, r2, g2, b2,radius);
   }
   
   if(X1 < X2 && Y1<Y2) {
-    midPointCase1(X1, Y1, X2, Y2, r, g, b);
+    midPointCase1(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius);
   } else if(X1 > X2 && Y1< Y2) {
-    midPointCase2(X1, Y1, X2, Y2, r, g, b);
+    midPointCase2(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius);
   } else if(X1 > X2 && Y1 > Y2) {
-    midPointCase3(X1, Y1, X2, Y2, r, g, b);
+    midPointCase3(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius);
   } else if(X1 < X2 && Y1>Y2){
-    midPointCase4(X1, Y1, X2, Y2, r, g, b);
+    midPointCase4(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius);
   }
 }
 
 // Assumption: X1<X2, Y1< Y2
-function midPointCase1(X1, Y1, X2, Y2, r, g, b)
+function midPointCase1(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius)
 {
  
     // calculate dx & dy
@@ -59,7 +59,8 @@ function midPointCase1(X1, Y1, X2, Y2, r, g, b)
       // Plot initial given point
       // putpixel(x,y) can be used to
       // print pixel of line in graphics
-      setTextureMapPixel(x, y, r, g, b);
+
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
 
       // iterate through value of X
       while (x < X2)
@@ -80,12 +81,13 @@ function midPointCase1(X1, Y1, X2, Y2, r, g, b)
           // Plot intermediate points
           // putpixel(x,y) is used to print
           // pixel of line in graphics
-          setTextureMapPixel(x, y, r, g, b);
+
+          setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       } 
     } else {
       let d=(2*dx)-dy;
       let x = X1, y = Y1;
-      setTextureMapPixel(x, y, r, g, b);
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       while (y <= Y2) {
         if (d>0) {
           x++;
@@ -93,7 +95,7 @@ function midPointCase1(X1, Y1, X2, Y2, r, g, b)
         } else {
           d = d + 2*dx;
         }
-        setTextureMapPixel(x, y, r, g, b);
+        setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
         y++;
       }
     }
@@ -101,7 +103,7 @@ function midPointCase1(X1, Y1, X2, Y2, r, g, b)
 
 
 // Assumption: X1 > X2, Y1< Y2
-function midPointCase2(X1, Y1, X2, Y2, r, g, b)
+function midPointCase2(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius)
 {
  
     // calculate dx & dy
@@ -116,7 +118,7 @@ function midPointCase2(X1, Y1, X2, Y2, r, g, b)
       // Plot initial given point
       // putpixel(x,y) can be used to
       // print pixel of line in graphics
-      setTextureMapPixel(x, y, r, g, b);
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
 
       // iterate through value of X
       while (x > X2)
@@ -137,12 +139,12 @@ function midPointCase2(X1, Y1, X2, Y2, r, g, b)
           // Plot intermediate points
           // putpixel(x,y) is used to print
           // pixel of line in graphics
-          setTextureMapPixel(x, y, r, g, b);
+          setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       }
     } else {
       let d=(2*dx)-dy;
       let x = X1, y = Y1;
-      setTextureMapPixel(x, y, r, g, b);
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       while (y <= Y2) {
         if (d>0) {
           x--;
@@ -150,14 +152,14 @@ function midPointCase2(X1, Y1, X2, Y2, r, g, b)
         } else {
           d = d + 2*dx;
         }
-        setTextureMapPixel(x, y, r, g, b);
+        setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
         y++;
       }
     }
 }
 
 // Assumption: X1 > X2, Y1 > Y2 like 0,0 -> -10, -5
-function midPointCase3(X1, Y1, X2, Y2, r, g, b)
+function midPointCase3(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius)
 {
     // calculate dx & dy
     let dx = X1 - X2;
@@ -171,7 +173,7 @@ function midPointCase3(X1, Y1, X2, Y2, r, g, b)
       // Plot initial given point
       // putpixel(x,y) can be used to
       // print pixel of line in graphics
-      setTextureMapPixel(x, y, r, g, b);
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
 
       // iterate through value of X
       while (x > X2)
@@ -192,12 +194,13 @@ function midPointCase3(X1, Y1, X2, Y2, r, g, b)
           // Plot intermediate points
           // putpixel(x,y) is used to print
           // pixel of line in graphics
-          setTextureMapPixel(x, y, r, g, b);
+          setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       } 
     } else {
       let d=(2*dx)-dy;
       let x = X1, y = Y1;
-      setTextureMapPixel(x, y, r, g, b);
+
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       while (y >= Y2) {
         if (d>0) {
           x--;
@@ -205,14 +208,15 @@ function midPointCase3(X1, Y1, X2, Y2, r, g, b)
         } else {
           d = d + 2*dx;
         }
-        setTextureMapPixel(x, y, r, g, b);
+
+        setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
         y--;
       }
     }
 }
 
 // Assumption: X1 < X2, Y1 > Y2 like 0,0 -> 10, -5
-function midPointCase4(X1, Y1, X2, Y2, r, g, b)
+function midPointCase4(X1, Y1, X2, Y2, r, g, b, r2, g2, b2,radius)
 {
     // calculate dx & dy
     let dx = X2 - X1;
@@ -228,7 +232,7 @@ function midPointCase4(X1, Y1, X2, Y2, r, g, b)
     // Plot initial given point
     // putpixel(x,y) can be used to
     // print pixel of line in graphics
-    setTextureMapPixel(x, y, r, g, b);
+    setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
  
     // iterate through value of X
     while (x < X2)
@@ -249,12 +253,13 @@ function midPointCase4(X1, Y1, X2, Y2, r, g, b)
         // Plot intermediate points
         // putpixel(x,y) is used to print
         // pixel of line in graphics
-        setTextureMapPixel(x, y, r, g, b);
+
+        setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
     }
     } else {
       let d=(2*dx)-dy;
       let x = X1, y = Y1;
-      setTextureMapPixel(x, y, r, g, b);
+      setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
       while (y >= Y2) {
         if (d>0) {
           x++;
@@ -262,44 +267,44 @@ function midPointCase4(X1, Y1, X2, Y2, r, g, b)
         } else {
           d = d + 2*dx;
         }
-        setTextureMapPixel(x, y, r, g, b);
+        setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, y, radius)
         y--;
       }
     }
 }
 
-function vertical(X1, Y1, Y2, r, g, b) {
+function vertical(X1, Y1, Y2, r, g, b,r2, g2, b2, radius) {
   let y = Math.min(Y1, Y2);
   while(y<= Math.max(Y1, Y2)) {
-    setTextureMapPixel(X1, y, r, g, b);
+    setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, X1, y, radius)
     y++;
   }
 }
 
 
-function horizontal(X1, X2, Y1, r, g, b) {
+function horizontal(X1, X2, Y1, r, g, b,r2, g2, b2,radius) {
   let x = Math.min(X1, X2);
   while(x<= Math.max(X1, X2)) {
-    setTextureMapPixel(x, Y1, r, g, b);
+    setTextureMapPixelWithGradient(r, g, b, r2, g2, b2, X1, Y1, x, Y1, radius)
     x++;
   }
 }
 
-function drawCircle(radius, centerx, centery, r, g, b) {
+function drawCircle(radius, centerx, centery, r, g, b, r2, g2, b2) {
   let x = radius;
   let y = 0;
   let e = 0;
   let step = 0.5;
 
   while(x >= y) {
-    drawLine(centerx, centery, x + centerx, y + centery, r, g, b);
-    drawLine(centerx, centery, y + centerx, x + centery, r, g, b);
-    drawLine(centerx, centery, -1*x + centerx, y + centery, r, g, b);
-    drawLine(centerx, centery, -1*y + centerx, x + centery, r, g, b);
-    drawLine(centerx, centery, -1*x + centerx, -1*y + centery, r, g, b);
-    drawLine(centerx, centery, -1*y + centerx, -1*x + centery, r, g, b);
-    drawLine(centerx, centery, x + centerx, -1*y + centery, r, g, b);
-    drawLine(centerx, centery, y + centerx, -1*x + centery, r, g, b);
+    drawLine(centerx, centery, x + centerx, y + centery, r, g, b, r2, g2, b2, radius);
+    drawLine(centerx, centery, y + centerx, x + centery, r, g, b, r2, g2, b2,radius);
+    drawLine(centerx, centery, -1*x + centerx, y + centery, r, g, b, r2, g2, b2, radius);
+    drawLine(centerx, centery, -1*y + centerx, x + centery, r, g, b, r2, g2, b2,radius);
+    drawLine(centerx, centery, -1*x + centerx, -1*y + centery, r, g, b, r2, g2, b2,radius);
+    drawLine(centerx, centery, -1*y + centerx, -1*x + centery, r, g, b, r2, g2, b2,radius);
+    drawLine(centerx, centery, x + centerx, -1*y + centery, r, g, b, r2, g2, b2,radius);
+    drawLine(centerx, centery, y + centerx, -1*x + centery, r, g, b, r2, g2, b2,radius);
     if (e <= 0) {
       y+=step;
       e+= (2*y+1);
@@ -308,6 +313,28 @@ function drawCircle(radius, centerx, centery, r, g, b) {
       e-= (2*x+1);
     }
   }
+}
+
+function getcolor(r0, g0, b0, r1, b1, g1, x0, y0, x1, y1, radius) {
+  // distance of current point to center / total radius
+  const xDist = x0 - x1;
+  const yDist = y0 - y1;
+  const dist = Math.pow( Math.pow(xDist, 2) + Math.pow(yDist, 2), 0.5);
+  let t = dist/radius;
+
+  // https://www.alanzucconi.com/2016/01/06/colour-interpolation/
+
+  let newr = r0/255.0 + (r1/255.0 - r0/255.0)*t;
+  let newg = g0/255.0 + (g1/255.0 - g0/255.0)*t;
+  let newb = b0/255.0 + (b1/255.0 - b0/255.0)*t;
+
+  return [newr*255, newg*255, newb*255]
+
+}
+
+function setTextureMapPixelWithGradient(r0, g0, b0, r1, g1, b1, x0, y0, x, y, radius) {
+  let color = getcolor(r0, g0, b0, r1, g1, b1, x0, y0, x, y, radius)
+  setTextureMapPixel(x, y, color[0], color[1], color[2]);
 }
 
 function setTextureMapPixel(x, y, rr, gg, bb) {
@@ -380,7 +407,11 @@ function getDots() {
         let r = color[0];
         let g = color[1];
         let b = color[2];
-        drawCircle(rad, x, y, r, g, b)
+        let color2 = colorList[Math.floor(random(0, colorList.length))];
+        let r2 = 0
+        let g2 = 0
+        let b2 = 0
+        drawCircle(rad, x, y, r, g, b, r2, g2, b2)
         circleList.push([x, y, rad])
         coveredArea = coveredArea + (Math.PI * Math.pow(rad, 2));
     } else {
