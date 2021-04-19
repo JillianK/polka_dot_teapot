@@ -22,7 +22,6 @@ function setupScene(camera) {
 
     createCanvas(resX, resY);
     pixelDensity(1);
-    console.log("Finished setup");
 }
 
 var printSparse = 0;
@@ -272,12 +271,12 @@ function drawObject(shape) {
 * @param {Shape[]} shapes
 */
 function renderScene(shapes) {
-    console.log("Rendering scene",shapes);
+    //console.log("Rendering scene",shapes);
     for (let shape of shapes) {
-        console.log("Drawing: ", shape.id);
+        console.log("-Drawing: ",shape.id);
         const start = Date.now()
         drawObject(shape);
-        console.log("Finished in: ", Date.now()-start);
+        console.log("-- in: ",Date.now()-start);
     }
 }
 
@@ -288,6 +287,7 @@ function preload(){
 }
 
 function setup(){
+    state.startframe = Date.now();
     geometries["teapot"] = processText(consts.geos.teapot);
     geometries["triangle"] = processText(consts.geos.triangle);
     state.myshader = phongShader; // phong goraud default
@@ -302,6 +302,7 @@ function setup(){
 }
 
 function myredraw(){
+    state.startframe = Date.now();
     let scene = state.scene;
     state.z.fill(Number.POSITIVE_INFINITY);
     state.fb.fill(0);
@@ -310,17 +311,38 @@ function myredraw(){
     redraw();
 }
 
+function antialias(){
+    state.fb = pixels.slice();
+    console.log('antialiasing');
+
+    for (let idx in state.fb){
+        if (idx%4==3){
+            pixels[idx] = state.fb[idx] = 255;
+            continue;
+        }
+        let v = 0
+        for(let i in state.antialias){
+            v += state.fbs[i][idx] * state.antialias[i][2];
+        }
+        pixels[idx] = state.fb[idx] = v;
+        // pixels[idx] = state.fb[idx] = state.aliasfb[state.aliaser][idx];
+    }
+}
+
 function draw(){
     let scene = state.scene;
     //console.log(scene.scene);
-    const start = Date.now();
     background('lightgray');
     loadPixels();
+    console.log("-Precompute: ", Date.now() - state.startframe);
     renderScene(scene.scene.shapes);
-    console.log("Rendered in: ", Date.now() - start);
     updatePixels();
+    antialias();
+
+    console.log("!Frame: ", Date.now()-state.startframe)
     noLoop();
 }
+
 
 /***************************************** */
 
