@@ -8,17 +8,46 @@ let minamountofcirclesontexturemap = 2;
 // so we can choose what is the minimum number of circles to include on the texture map
 let maxsizetoavoidoverflow = sz*pixelSparsenessFactor/minamountofcirclesontexturemap;
 let minsize = 10;
-let maxsize = maxsizetoavoidoverflow;
+let maxsize = 100;
 let paddingFactor = 5;
 let colorList = [
-    [170, 93, 212],
-    [214, 84, 179],
-    [255, 156, 102],
-    [52,77,235],
-    [112,225,4]
+    [255, 0, 0]
 ]
+let basecolor = [255, 255, 255];
+
+let radialmode = "none"
 
 let txtmp;
+
+// source: https://javascript.plainenglish.io/convert-hex-to-rgb-with-javascript-4984d16219c3
+
+function hextorgb(hexcolor) {
+    let hex = hexcolor.substr(1);
+    let rgb_hex = hex.match(/.{1,2}/g);
+    let rgb = [
+        parseInt(rgb_hex[0], 16),
+        parseInt(rgb_hex[1], 16),
+        parseInt(rgb_hex[2], 16)
+    ];
+    return rgb;
+}
+
+function changeRadialMode(mode) {
+  radialmode = mode;
+}
+
+function changesettings(minsize0, maxsize0, paddingFactor0, colors, basecolor0) {
+  minsize = parseFloat(minsize0)
+  maxsize = Math.min(parseFloat(maxsize0), maxsizetoavoidoverflow)
+  paddingFactor = parseFloat(paddingFactor0)
+  let newColorList = []
+  for (let i = 0; i < colors.length; i+=1){
+    let rgb = hextorgb(colors[i]);
+    newColorList.push(rgb);
+  }
+  colorList = newColorList;
+  basecolor = hextorgb(basecolor0)
+}
 
 function preload() {
   inittxtmp()
@@ -357,7 +386,7 @@ function inittxtmp() {
   for (let i = 0; i < sz; i++) {
     let row = [];
     for (let j = 0; j < sz; j++) {
-      row.push([255, 255, 255]);
+      row.push([basecolor[0], basecolor[1], basecolor[2]]);
     }
     tm.push(row);
   }
@@ -386,6 +415,14 @@ function getDots() {
   let circleList = [];
   let numAllowedFailedCircles = 20;
   let coveredArea = 0;
+  print("");
+  print("minsize " + minsize)
+  print("maxsize " + maxsize)
+  print("padding " + paddingFactor)
+  print("mpadding divide by 2 " + paddingFactor/2)
+  let rad1 = random(minsize, maxsize)
+  print("random size " + rad1)
+  print("");
   while(coveredArea < sz*sz*pixelSparsenessFactor && numAllowedFailedCircles >= 0){
     let x = random(0, sz)
     let y = random(0, sz)
@@ -410,10 +447,33 @@ function getDots() {
         let r = color[0];
         let g = color[1];
         let b = color[2];
-        let color2 = colorList[Math.floor(random(0, colorList.length))];
-        let r2 = 0
-        let g2 = 0
-        let b2 = 0
+
+
+        let r2;
+        let g2;
+        let b2;
+        if (radialmode === "none") {
+          r2 = r;
+          g2 = g;
+          b2 = b;
+        } else if (radialmode === "black") {
+          r2 = 0;
+          g2 = 0;
+          b2 = 0;
+        } else if (radialmode === "white") {
+          r2 = 255;
+          g2 = 255;
+          b2 = 255;
+        }else if (radialmode === "random") {
+          let color2 = colorList[Math.floor(random(0, colorList.length))];
+          r2 = random(0, 255);
+          g2 = random(0, 255);
+          b2 = random(0, 255);
+        }
+
+        print(r2 + " " + g2 + " " + b2);
+
+
         drawCircle(rad, x, y, r, g, b, r2, g2, b2)
         circleList.push([x, y, rad])
         coveredArea = coveredArea + (Math.PI * Math.pow(rad, 2));

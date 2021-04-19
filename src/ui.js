@@ -1,6 +1,70 @@
 document.getElementById("asc-forms").addEventListener("submit", addASCFile);
 document.getElementById("scene-forms").addEventListener("submit", changeSceneFile);
 document.getElementById("camera-remote").addEventListener("submit", suppressDefault);
+document.getElementById("mindotsize").addEventListener("change", (e) => {
+  let inputVal = parseInt(e.target.value);
+  const currMax = parseInt(document.getElementById("mindotsize").max);
+  const currMin = parseInt(document.getElementById("mindotsize").min);
+  if(inputVal > currMax) {
+    document.getElementById("mindotsize").value = currMax;
+    inputVal = currMax;
+  }
+  if (inputVal < currMin) {
+    document.getElementById("mindotsize").value = currMin;
+    inputVal = currMin;
+  }
+  updateDots();
+  document.getElementById("maxdotsize").min = inputVal;
+});
+document.getElementById("maxdotsize").addEventListener("change", (e) => {
+  let inputVal = parseInt(e.target.value);
+  const currMin = parseInt(document.getElementById("maxdotsize").min);
+  const currMax = parseInt(document.getElementById("maxdotsize").max);
+  if(inputVal < currMin) {
+    document.getElementById("maxdotsize").value = currMin;
+    inputVal = currMin;
+  }
+  if(inputVal > currMax) {
+    document.getElementById("maxdotsize").value = parseInt(currMax);
+    inputVal = currMax;
+  }
+  updateDots();
+  document.getElementById("mindotsize").max = inputVal;
+});
+document.getElementById("numcolors").addEventListener("change", (e) => {
+  let inputVal = parseInt(e.target.value);
+  const currMin = parseInt(document.getElementById("numcolors").min);
+  const currMax = parseInt(document.getElementById("numcolors").max);
+  if(inputVal < currMin) {
+    document.getElementById("numcolors").value = currMin;
+    inputVal = currMin;
+  }
+  if(inputVal > currMax) {
+    document.getElementById("numcolors").value = currMax;
+    inputVal = currMax;
+  }
+
+  let existingcolors = []
+  for (let i = 0; i < document.getElementById("colorsection").rows.length; i+=1) {
+    existingcolors.push(document.getElementById("colorsection").rows[i].cells[1].firstChild.value)
+  }
+
+  const colorInputElement = '<tr><td>Dot Color '
+  const cIE2 = ' :</td><td><input type="color" class="colorpicker" value="';
+  const colorInputElementPart2 = '" onchange="updateDots()"></td></tr>';
+  let myInnerHtml = "";
+  for(let i=0; i< inputVal; i+=1) {
+    myInnerHtml += colorInputElement;
+    myInnerHtml += (i+1);
+    myInnerHtml += cIE2
+    myInnerHtml += ((i < existingcolors.length) ? existingcolors[i] : '#ff0000'); // TODO maybe switch color
+    myInnerHtml += colorInputElementPart2;
+  }
+  document.getElementById("colorsection").innerHTML = myInnerHtml;
+  updateDots();
+});
+document.getElementById("dotspacing").addEventListener("change", updateDots);
+document.getElementById("maxdotsize").max = maxsizetoavoidoverflow;
 const sin5 = 0.0871557427;
 const cos5 = 0.996194698;
 const remoteControls = {
@@ -166,6 +230,29 @@ function typeChange() {
     document.getElementById("dir-f").hidden = true;
 
   }
+}
+
+function dotgradientchanged(value) {
+  changeRadialMode(value);
+  updateDots();
+}
+
+function updateDots() {
+  let basecolor = document.getElementById("basecolor").value;
+  let mindot = document.getElementById("mindotsize").value;
+  let maxdot = document.getElementById("maxdotsize").value;
+  let dotspacing = document.getElementById("dotspacing").value;
+  print(basecolor);
+
+  let colors = []
+  for (let i = 0; i < document.getElementById("colorsection").rows.length; i+=1) {
+    colors.push(document.getElementById("colorsection").rows[i].cells[1].firstChild.value)
+  }
+
+  print(colors)
+
+  changesettings(mindot, maxdot, dotspacing, colors, basecolor)
+  updateTextureMap();
 }
 
 function updateCamera() {

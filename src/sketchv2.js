@@ -286,6 +286,11 @@ function preload(){
     consts.texture.teapot1 = getDots();
 }
 
+function updateTextureMap() {
+    consts.texture.teapot1 = getDots();
+    myredraw();
+}
+
 function setup(){
     state.startframe = Date.now();
     geometries["teapot"] = processText(consts.geos.teapot);

@@ -34,6 +34,79 @@
     </form>
   </div>
   <div class='rows center'>
+    <form id="settings">
+      <table>
+        <!-- <caption>Camera control</caption> -->
+        <thead>
+          <tr>
+            <th colspan="4">Polka Dot Settings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">
+              <strong style="text-decoration: underline;"><em>Sizing/Spacing</em></strong></br>
+            </td>
+          </tr>
+          <tr>
+            <td>Minimum Dot Size:</td>
+            <td><input id="mindotsize" type="number" value="10" min="10" max="100" /></td>
+          </tr>
+          <tr>
+            <td>Maximum Dot Size:</td>
+            <td><input id="maxdotsize" type="number" value="100" min="10" /></td>
+          </tr>
+          <tr>
+            <td>Spacing:</td>
+            <td><input id="dotspacing" type="number" value="5" min="0" /></td>
+          </tr>
+          <tr>
+            <td>Number of colors:</td>
+            <td><input id="numcolors" type="number" value="1" min="1" max="5" /></td>
+          </tr>
+        </tbody> 
+      </table>
+      <br/>
+      <table>
+        <thead>
+           <tr>
+            <td colspan="4">
+              <strong style="text-decoration: underline;"><em>Colors</em></strong></br>
+            </td>
+          </tr>
+          <tr>
+            <td>Teapot Base Color:</td>
+            <td><input id="basecolor" type="color" class="colorpicker" value="#ffffff" onchange="updateDots()"></td>
+          </tr>
+        </thead>
+        <tbody id="colorsection">
+          <tr>
+            <td>Dot Color 1:</td>
+            <td><input type="color" class="colorpicker" value="#ff0000" onchange="updateDots()"></td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table>
+        <tbody>
+          <tr>
+          <strong style="text-decoration: underline;"><em>Gradient</em></strong></br>
+          <input type="radio" name="gradient" value="none" checked onchange="dotgradientchanged(this.value)">None</input>
+          <input type="radio" name="gradient" value="black" onchange="dotgradientchanged(this.value)">Black</input>
+          <input type="radio" name="gradient" value="white" onchange="dotgradientchanged(this.value)">White</input>
+          <input type="radio" name="gradient" value="random" onchange="dotgradientchanged(this.value)">Random</input><br>
+        </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table>
+        <tbody>
+          <tr>
+            <td><input type="button" onclick="updateDots()" value="Regenerate Dots" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
     <form id="shader">
       <strong style="text-decoration: underline;"><em>Shader types</em></strong></br>
       <input type="radio" name="shader" value="phong" checked>Phong</input>
