@@ -13,6 +13,7 @@ let paddingFactor = 5;
 let colorList = [
     [255, 0, 0]
 ]
+let basecolor = [255, 255, 255];
 
 let radialmode = "none"
 
@@ -35,7 +36,7 @@ function changeRadialMode(mode) {
   radialmode = mode;
 }
 
-function changesettings(minsize0, maxsize0, paddingFactor0, colors) {
+function changesettings(minsize0, maxsize0, paddingFactor0, colors, basecolor0) {
   minsize = parseFloat(minsize0)
   maxsize = Math.min(parseFloat(maxsize0), maxsizetoavoidoverflow)
   paddingFactor = parseFloat(paddingFactor0)
@@ -45,6 +46,7 @@ function changesettings(minsize0, maxsize0, paddingFactor0, colors) {
     newColorList.push(rgb);
   }
   colorList = newColorList;
+  basecolor = hextorgb(basecolor0)
 }
 
 function preload() {
@@ -384,7 +386,7 @@ function inittxtmp() {
   for (let i = 0; i < sz; i++) {
     let row = [];
     for (let j = 0; j < sz; j++) {
-      row.push([255, 255, 255]);
+      row.push([basecolor[0], basecolor[1], basecolor[2]]);
     }
     tm.push(row);
   }

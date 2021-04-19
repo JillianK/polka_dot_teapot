@@ -238,10 +238,11 @@ function dotgradientchanged(value) {
 }
 
 function updateDots() {
+  let basecolor = document.getElementById("basecolor").value;
   let mindot = document.getElementById("mindotsize").value;
   let maxdot = document.getElementById("maxdotsize").value;
   let dotspacing = document.getElementById("dotspacing").value;
-  print(mindot + " " + maxdot + " " + dotspacing)
+  print(basecolor);
 
   let colors = []
   for (let i = 0; i < document.getElementById("colorsection").rows.length; i+=1) {
@@ -250,7 +251,7 @@ function updateDots() {
 
   print(colors)
 
-  changesettings(mindot, maxdot, dotspacing, colors)
+  changesettings(mindot, maxdot, dotspacing, colors, basecolor)
   updateTextureMap();
 }
 
