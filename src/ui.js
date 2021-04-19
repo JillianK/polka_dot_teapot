@@ -1,6 +1,9 @@
 document.getElementById("asc-forms").addEventListener("submit", addASCFile);
 document.getElementById("scene-forms").addEventListener("submit", changeSceneFile);
 document.getElementById("camera-remote").addEventListener("submit", suppressDefault);
+document.getElementById("mindotsize").addEventListener("change", updateDots);
+document.getElementById("maxdotsize").addEventListener("change", updateDots);
+document.getElementById("dotspacing").addEventListener("change", updateDots);
 const sin5 = 0.0871557427;
 const cos5 = 0.996194698;
 const remoteControls = {
@@ -166,6 +169,16 @@ function typeChange() {
     document.getElementById("dir-f").hidden = true;
 
   }
+}
+
+function updateDots() {
+  let mindot = document.getElementById("mindotsize").value;
+  let maxdot = document.getElementById("maxdotsize").value;
+  let dotspacing = document.getElementById("dotspacing").value;
+  print(mindot + " " + maxdot + " " + dotspacing)
+
+  changesettings(mindot, maxdot, dotspacing)
+  updateTextureMap();
 }
 
 function updateCamera() {

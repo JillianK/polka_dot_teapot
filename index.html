@@ -34,6 +34,30 @@
     </form>
   </div>
   <div class='rows center'>
+    <form id="settings">
+      <table>
+        <!-- <caption>Camera control</caption> -->
+        <thead>
+          <tr>
+            <th colspan="4">Settings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Minimum Dot Size:</td>
+            <td><input id="mindotsize" type="number" value="10" min="10" /></td>
+          </tr>
+          <tr>
+            <td>Maximum Dot Size:</td>
+            <td><input id="maxdotsize" type="number" value="100" min="10" /></td>
+          </tr>
+          <tr>
+            <td>Spacing:</td>
+            <td><input id="dotspacing" type="number" value="5" min="0" /></td>
+          </tr>
+        </tbody> 
+      </table>
+    </form>
     <form id="shader">
       <strong style="text-decoration: underline;"><em>Shader types</em></strong></br>
       <input type="radio" name="shader" value="phong" checked>Phong</input>

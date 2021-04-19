@@ -8,7 +8,7 @@ let minamountofcirclesontexturemap = 2;
 // so we can choose what is the minimum number of circles to include on the texture map
 let maxsizetoavoidoverflow = sz*pixelSparsenessFactor/minamountofcirclesontexturemap;
 let minsize = 10;
-let maxsize = maxsizetoavoidoverflow;
+let maxsize = 100;
 let paddingFactor = 5;
 let colorList = [
     [170, 93, 212],
@@ -19,6 +19,12 @@ let colorList = [
 ]
 
 let txtmp;
+
+function changesettings(minsize0, maxsize0, paddingFactor0) {
+  minsize = parseFloat(minsize0)
+  maxsize = Math.min(parseFloat(maxsize0), maxsizetoavoidoverflow)
+  paddingFactor = parseFloat(paddingFactor0)
+}
 
 function preload() {
   inittxtmp()
@@ -386,6 +392,14 @@ function getDots() {
   let circleList = [];
   let numAllowedFailedCircles = 20;
   let coveredArea = 0;
+  print("");
+  print("minsize " + minsize)
+  print("maxsize " + maxsize)
+  print("padding " + paddingFactor)
+  print("mpadding divide by 2 " + paddingFactor/2)
+  let rad1 = random(minsize, maxsize)
+  print("random size " + rad1)
+  print("");
   while(coveredArea < sz*sz*pixelSparsenessFactor && numAllowedFailedCircles >= 0){
     let x = random(0, sz)
     let y = random(0, sz)
