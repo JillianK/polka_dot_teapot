@@ -43,20 +43,29 @@ document.getElementById("numcolors").addEventListener("change", (e) => {
     document.getElementById("numcolors").value = currMax;
     inputVal = currMax;
   }
-  // get elements of the right class
-  // As you fill myInnerHtml, if you still have a color from those elements, pop that in
-  const colorInputElement = '<tr><td>Color:</td><td><input type="color" class="colorpicker" value="';
-  const colorInputElementPart2 = '"></td></tr>';
+
+  let existingcolors = []
+  for (let i = 0; i < document.getElementById("colorsection").rows.length; i+=1) {
+    existingcolors.push(document.getElementById("colorsection").rows[i].cells[1].firstChild.value)
+  }
+
+  const colorInputElement = '<tr><td>Dot Color '
+  const cIE2 = ' :</td><td><input type="color" class="colorpicker" value="';
+  const colorInputElementPart2 = '" onchange="updateDots()"></td></tr>';
   let myInnerHtml = "";
   for(let i=0; i< inputVal; i+=1) {
     myInnerHtml += colorInputElement;
-    myInnerHtml += '#ff0000'; // TODO maybe switch color
+    myInnerHtml += (i+1);
+    myInnerHtml += cIE2
+    myInnerHtml += ((i < existingcolors.length) ? existingcolors[i] : '#ff0000'); // TODO maybe switch color
     myInnerHtml += colorInputElementPart2;
   }
   document.getElementById("colorsection").innerHTML = myInnerHtml;
+  updateDots();
 });
 document.getElementById("dotspacing").addEventListener("change", updateDots);
 document.getElementById("maxdotsize").max = maxsizetoavoidoverflow;
+document.getElementById("solidgradientcolor").style.visibility = "hidden";
 const sin5 = 0.0871557427;
 const cos5 = 0.996194698;
 const remoteControls = {
@@ -224,13 +233,36 @@ function typeChange() {
   }
 }
 
+function dotgradientchanged(value) {
+  print(value)
+  if (value === "solid") {
+    document.getElementById("solidgradientcolor").style.visibility = "visible";
+  } else {
+    document.getElementById("solidgradientcolor").style.visibility = "collapse";
+  }
+  changeRadialMode(value);
+  updateDots();
+}
+
+function updateRadialColor(value) {
+  changeRadialColor(value);
+  updateDots();
+}
+
 function updateDots() {
   let mindot = document.getElementById("mindotsize").value;
   let maxdot = document.getElementById("maxdotsize").value;
   let dotspacing = document.getElementById("dotspacing").value;
   print(mindot + " " + maxdot + " " + dotspacing)
 
-  changesettings(mindot, maxdot, dotspacing)
+  let colors = []
+  for (let i = 0; i < document.getElementById("colorsection").rows.length; i+=1) {
+    colors.push(document.getElementById("colorsection").rows[i].cells[1].firstChild.value)
+  }
+
+  print(colors)
+
+  changesettings(mindot, maxdot, dotspacing, colors)
   updateTextureMap();
 }
 

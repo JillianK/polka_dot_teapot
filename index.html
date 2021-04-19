@@ -39,10 +39,15 @@
         <!-- <caption>Camera control</caption> -->
         <thead>
           <tr>
-            <th colspan="4">Settings</th>
+            <th colspan="4">Polka Dot Settings</th>
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="4">
+              <strong style="text-decoration: underline;"><em>Sizing/Spacing</em></strong></br>
+            </td>
+          </tr>
           <tr>
             <td>Minimum Dot Size:</td>
             <td><input id="mindotsize" type="number" value="10" min="10" max="100" /></td>
@@ -63,10 +68,45 @@
       </table>
       <br/>
       <table>
+        <thead>
+           <tr>
+            <td colspan="4">
+              <strong style="text-decoration: underline;"><em>Colors</em></strong></br>
+            </td>
+          </tr>
+        </thead>
         <tbody id="colorsection">
           <tr>
-            <td>Color:</td>
-            <td><input type="color" class="colorpicker" value="#ff0000"></td>
+            <td>Dot Color 1:</td>
+            <td><input type="color" class="colorpicker" value="#ff0000" onchange="updateDots()"></td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table>
+        <tbody>
+          <tr>
+          <strong style="text-decoration: underline;"><em>Gradient</em></strong></br>
+          <input type="radio" name="gradient" value="none" checked onchange="dotgradientchanged(this.value)">None</input>
+          <input type="radio" name="gradient" value="solid" onchange="dotgradientchanged(this.value)">Solid</input>
+          <input type="radio" name="gradient" value="random" onchange="dotgradientchanged(this.value)">Random</input><br>
+        </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table id="solidgradientcolor">
+        <tbody>
+            <tr>
+            <td>Solid Shader:</td>
+            <td><input type="color" class="colorpicker" value="#000000" onchange="updateRadialColor(this.value)"></td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table>
+        <tbody>
+          <tr>
+            <td><input type="button" onclick="updateDots()" value="Regenerate Dots" /></td>
           </tr>
         </tbody>
       </table>

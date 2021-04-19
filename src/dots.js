@@ -11,19 +11,45 @@ let minsize = 10;
 let maxsize = 100;
 let paddingFactor = 5;
 let colorList = [
-    [170, 93, 212],
-    [214, 84, 179],
-    [255, 156, 102],
-    [52,77,235],
-    [112,225,4]
+    [255, 0, 0]
 ]
+let radialcolor = [0, 0, 0];
+let radialmode = "none"
 
 let txtmp;
 
-function changesettings(minsize0, maxsize0, paddingFactor0) {
+// source: https://javascript.plainenglish.io/convert-hex-to-rgb-with-javascript-4984d16219c3
+
+function hextorgb(hexcolor) {
+    let hex = hexcolor.substr(1);
+    let rgb_hex = hex.match(/.{1,2}/g);
+    let rgb = [
+        parseInt(rgb_hex[0], 16),
+        parseInt(rgb_hex[1], 16),
+        parseInt(rgb_hex[2], 16)
+    ];
+    return rgb;
+}
+
+function changeRadialMode(mode) {
+  radialmode = mode;
+}
+
+function changeRadialColor(color) {
+  let rgb = hextorgb(color);
+  radialcolor = rgb;
+}
+
+function changesettings(minsize0, maxsize0, paddingFactor0, colors) {
   minsize = parseFloat(minsize0)
   maxsize = Math.min(parseFloat(maxsize0), maxsizetoavoidoverflow)
   paddingFactor = parseFloat(paddingFactor0)
+  let newColorList = []
+  for (let i = 0; i < colors.length; i+=1){
+    let rgb = hextorgb(colors[i]);
+    newColorList.push(rgb);
+  }
+  colorList = newColorList;
 }
 
 function preload() {
@@ -424,10 +450,29 @@ function getDots() {
         let r = color[0];
         let g = color[1];
         let b = color[2];
-        let color2 = colorList[Math.floor(random(0, colorList.length))];
-        let r2 = 0
-        let g2 = 0
-        let b2 = 0
+
+
+        let r2;
+        let g2;
+        let b2;
+        if (radialmode === "none") {
+          r2 = r
+          g2 = g
+          b2 = b
+        } else if (radialmode === "solid") {
+          r2 = radialcolor[0];
+          g2 = radialcolor[1];
+          b2 = radialcolor[2];
+        } else if (radialmode === "random") {
+          let color2 = colorList[Math.floor(random(0, colorList.length))];
+          r2 = random(0, 255);
+          g2 = random(0, 255);
+          b2 = random(0, 255);
+        }
+
+        print(r2 + " " + g2 + " " + b2);
+
+
         drawCircle(rad, x, y, r, g, b, r2, g2, b2)
         circleList.push([x, y, rad])
         coveredArea = coveredArea + (Math.PI * Math.pow(rad, 2));
