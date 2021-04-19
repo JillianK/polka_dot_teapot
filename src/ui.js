@@ -65,7 +65,6 @@ document.getElementById("numcolors").addEventListener("change", (e) => {
 });
 document.getElementById("dotspacing").addEventListener("change", updateDots);
 document.getElementById("maxdotsize").max = maxsizetoavoidoverflow;
-document.getElementById("solidgradientcolor").style.visibility = "hidden";
 const sin5 = 0.0871557427;
 const cos5 = 0.996194698;
 const remoteControls = {
@@ -234,18 +233,7 @@ function typeChange() {
 }
 
 function dotgradientchanged(value) {
-  print(value)
-  if (value === "solid") {
-    document.getElementById("solidgradientcolor").style.visibility = "visible";
-  } else {
-    document.getElementById("solidgradientcolor").style.visibility = "collapse";
-  }
   changeRadialMode(value);
-  updateDots();
-}
-
-function updateRadialColor(value) {
-  changeRadialColor(value);
   updateDots();
 }
 

@@ -13,7 +13,7 @@ let paddingFactor = 5;
 let colorList = [
     [255, 0, 0]
 ]
-let radialcolor = [0, 0, 0];
+
 let radialmode = "none"
 
 let txtmp;
@@ -33,11 +33,6 @@ function hextorgb(hexcolor) {
 
 function changeRadialMode(mode) {
   radialmode = mode;
-}
-
-function changeRadialColor(color) {
-  let rgb = hextorgb(color);
-  radialcolor = rgb;
 }
 
 function changesettings(minsize0, maxsize0, paddingFactor0, colors) {
@@ -456,14 +451,18 @@ function getDots() {
         let g2;
         let b2;
         if (radialmode === "none") {
-          r2 = r
-          g2 = g
-          b2 = b
-        } else if (radialmode === "solid") {
-          r2 = radialcolor[0];
-          g2 = radialcolor[1];
-          b2 = radialcolor[2];
-        } else if (radialmode === "random") {
+          r2 = r;
+          g2 = g;
+          b2 = b;
+        } else if (radialmode === "black") {
+          r2 = 0;
+          g2 = 0;
+          b2 = 0;
+        } else if (radialmode === "white") {
+          r2 = 255;
+          g2 = 255;
+          b2 = 255;
+        }else if (radialmode === "random") {
           let color2 = colorList[Math.floor(random(0, colorList.length))];
           r2 = random(0, 255);
           g2 = random(0, 255);
