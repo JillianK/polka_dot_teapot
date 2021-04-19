@@ -45,7 +45,7 @@
         <tbody>
           <tr>
             <td>Minimum Dot Size:</td>
-            <td><input id="mindotsize" type="number" value="10" min="10" /></td>
+            <td><input id="mindotsize" type="number" value="10" min="10" max="100" /></td>
           </tr>
           <tr>
             <td>Maximum Dot Size:</td>
@@ -55,7 +55,20 @@
             <td>Spacing:</td>
             <td><input id="dotspacing" type="number" value="5" min="0" /></td>
           </tr>
+          <tr>
+            <td>Number of colors:</td>
+            <td><input id="numcolors" type="number" value="1" min="1" max="5" /></td>
+          </tr>
         </tbody> 
+      </table>
+      <br/>
+      <table>
+        <tbody id="colorsection">
+          <tr>
+            <td>Color:</td>
+            <td><input type="color" class="colorpicker" value="#ff0000"></td>
+          </tr>
+        </tbody>
       </table>
     </form>
     <form id="shader">
