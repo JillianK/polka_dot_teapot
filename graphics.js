@@ -107,12 +107,19 @@ function interpolateUV(v0, v1, v2, t_alpha, t_beta, t_gamma) {
 
 //Look up texture value at u,v
 function textureLookup(u,v,texmap) {
+  /*
   var unalteredX = (1-u) * (texmap.width - 1);
   var unalteredY = v * (texmap.height - 1);
   var xLocation = floor(unalteredX);
   var yLocation = floor(unalteredY);
+  */
+  var unalteredX = (1-u) * (sz - 1);
+  var unalteredY = v * (sz - 1);
+  var xLocation = floor(unalteredX);
+  var yLocation = floor(unalteredY);
 
   //blend 4 adjacent pixels at xLocation, yLocation
+  /*
   var pixel_index = (xLocation + yLocation * texmap.width) * 4;
   var p00 = [texmap.pixels[pixel_index    ], texmap.pixels[pixel_index + 1], 
              texmap.pixels[pixel_index + 2], texmap.pixels[pixel_index + 3]];
@@ -131,6 +138,11 @@ function textureLookup(u,v,texmap) {
 
   var p01 = [texmap.pixels[pixel_index    ], texmap.pixels[pixel_index + 1], 
              texmap.pixels[pixel_index + 2], texmap.pixels[pixel_index + 3]];
+  */
+  var p00 = texmap[xLocation    ][yLocation    ];
+  var p11 = texmap[xLocation + 1][yLocation + 1];
+  var p10 = texmap[xLocation + 1][yLocation    ];
+  var p01 = texmap[xLocation    ][yLocation + 1];
 
   var f = unalteredX - xLocation;
   var g = unalteredY - yLocation;
