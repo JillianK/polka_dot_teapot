@@ -381,7 +381,7 @@ function setTextureMapPixel(x, y, rr, gg, bb) {
 }
 
 function inittxtmp() {
-  let tm = new Float32Array(4*sz*sz);
+  let tm = []
   
   for (let i = 0; i < sz; i++) {
     let row = [];

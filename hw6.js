@@ -98,6 +98,7 @@ var perspective_mat = [[2 * near / (p_right-p_left), 0, (p_right + p_left) / (p_
 
 
 function preload() {
+  //texture_image = loadImage(localURL);
   texture_image = getDots();
 }
 
