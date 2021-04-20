@@ -63,9 +63,9 @@ var zBuffer = [];
 
 var cMatrix;
 
-var from  = sceneData.scene.camera.from;
+var CAMERA_from  = sceneData.scene.camera.from;
 //var from = [0,0,5];
-var to = sceneData.scene.camera.to;
+var CAMERA_to = sceneData.scene.camera.to;
 var near = sceneData.scene.camera.bounds[0];
 var far = sceneData.scene.camera.bounds[1];
 var p_right = sceneData.scene.camera.bounds[2]; 
@@ -98,7 +98,7 @@ var perspective_mat = [[2 * near / (p_right-p_left), 0, (p_right + p_left) / (p_
 
 
 function preload() {
-  texture_image = loadImage(localURL);
+  texture_image = getDots();
 }
 
 
@@ -118,13 +118,39 @@ function setup() {
     }
   }
 
-  texture_image.loadPixels();
+  //texture_image.loadPixels();
   
-  cMatrix = createCamMatrix(from, to);
+  cMatrix = createCamMatrix(CAMERA_from, CAMERA_to);
   print("camera matrix", cMatrix);
   print("perspective matrix", perspective_mat);
   console.log(teapot);
   print("texture image", texture_image);
+}
+
+function myredraw(){
+  createCanvas(p_width, p_height);
+  strokeWeight(1);
+  frameRate(1);
+  //background(0,0,0);
+
+  for(var i=0; i<NUM_SAMPLES; i++) {
+    frameBuffers[i] = [];
+    for(var j = 0; j < p_width; j++) {
+      frameBuffers[i][j] = [];
+      for(var k = 0; k < p_height; k++) {
+        frameBuffers[i][j][k] = [];
+      }
+    }
+  }
+
+  texture_image.loadPixels();
+  
+  cMatrix = createCamMatrix(CAMERA_from, CAMERA_to);
+  print("camera matrix", cMatrix);
+  print("perspective matrix", perspective_mat);
+  console.log(teapot);
+  print("texture image", texture_image);
+  redraw();
 }
 
 function draw() {
