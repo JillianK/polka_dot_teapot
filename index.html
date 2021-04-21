@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polka Project</title>
+  <link href="index.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Polka Project</h1>
+  </header>
+  <main></main>
+  <div id="camera-remote-bar">
+    <form id="camera-remote" action="">
+      <button class="control-left" name="l" onclick="remote('left')"><i class="bi bi-arrow-left"></i></button>
+      <button class="control-right" name="r" onclick="remote('right')"><i class="bi bi-arrow-right"></i></button>
+      <button class="control-center-left" name="cl" onclick="remote('in')"><i class="bi bi-dash"></i></button>
+      <button class="control-center-right" name="cr" onclick="remote('out')"><i class="bi bi-plus"></i></button>
+      <button class="control-up" name="u" onclick="remote('up')"><i class="bi bi-arrow-up"></i></button>
+      <button class="control-down" name="d" onclick="remote('down')"><i class="bi bi-arrow-down"></i></button>
+      <button class="control-turn-right" name="tr" onclick="remote('left')"><i class="bi bi-arrow-clockwise"></i></button>
+      <button class="control-turn-left" name="tl" onclick="remote('left')"><i class="bi bi-arrow-counterclockwise"></i></button>
+      <select class="control-mode" name="mode" onchange="switchRemoteMode()">
+        <option value="ROT">Rotation</option>
+        <option value="TRN">Translation</option>
+      </select>
+    </form>
+  </div>
+  <div class='rows center'>
+    <form id="settings">
+      <table>
+        <!-- <caption>Camera control</caption> -->
+        <thead>
+          <tr>
+            <th colspan="4">Polka Dot Settings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">
+              <strong style="text-decoration: underline;"><em>Sizing/Spacing</em></strong></br>
+            </td>
+          </tr>
+          <tr>
+            <td>Minimum Dot Size:</td>
+            <td><input id="mindotsize" type="number" value="10" min="10" max="100" /></td>
+          </tr>
+          <tr>
+            <td>Maximum Dot Size:</td>
+            <td><input id="maxdotsize" type="number" value="100" min="10" /></td>
+          </tr>
+          <tr>
+            <td>Spacing:</td>
+            <td><input id="dotspacing" type="number" value="5" min="0" /></td>
+          </tr>
+          <tr>
+            <td>Number of colors:</td>
+            <td><input id="numcolors" type="number" value="1" min="1" max="5" /></td>
+          </tr>
+        </tbody> 
+      </table>
+      <br/>
+      <table>
+        <thead>
+           <tr>
+            <td colspan="4">
+              <strong style="text-decoration: underline;"><em>Colors</em></strong></br>
+            </td>
+          </tr>
+          <tr>
+            <td>Teapot Base Color:</td>
+            <td><input id="basecolor" type="color" class="colorpicker" value="#ffffff" onchange="updateDots()"></td>
+          </tr>
+        </thead>
+        <tbody id="colorsection">
+          <tr>
+            <td>Dot Color 1:</td>
+            <td><input type="color" class="colorpicker" value="#ff0000" onchange="updateDots()"></td>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table>
+        <tbody>
+          <tr>
+          <strong style="text-decoration: underline;"><em>Gradient</em></strong></br>
+          <input type="radio" name="gradient" value="none" checked onchange="dotgradientchanged(this.value)">None</input>
+          <input type="radio" name="gradient" value="black" onchange="dotgradientchanged(this.value)">Black</input>
+          <input type="radio" name="gradient" value="white" onchange="dotgradientchanged(this.value)">White</input>
+          <input type="radio" name="gradient" value="random" onchange="dotgradientchanged(this.value)">Random</input><br>
+        </tr>
+        </tbody>
+      </table>
+      <br/>
+      <table>
+        <tbody>
+          <tr>
+            <td><input type="button" onclick="updateDots()" value="Regenerate Dots" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <form id="shader">
+      <strong style="text-decoration: underline;"><em>Shader types</em></strong></br>
+      <input type="radio" name="shader" value="phong" checked>Phong</input>
+      <input type="radio" name="shader" value="goraud">Goraud</input>
+      <input type="radio" name="shader" value="flat">Flat</input><br>
+      <input type="button" onclick="changeShader()" value="Draw"></input>
+    </form>
+    <div class='cols'>
+      <form id='asc-forms' class='rows left'>
+        <label>
+          New ASC Name <br />
+          <input type="text" name='name' value="" required>
+        </label>
+        <label>
+          ASC File <br />
+          <input type="file" name='file' required value="" placeholder="ASC file" />
+        </label>
+        <input type="submit" value="Add new asc file">
+      </form>
+      <div class="rows" id="asc-files">
+        <div id='file-template' class='hidden'><em></em> <button class='right'>X</button></div>
+      </div>
+    </div>
+    <form id='scene-forms' class='rows left'>
+      <label>
+        Scene File <br />
+        <input type="file" name='file' required value="" placeholder="Scene file" />
+      </label>
+      <input type="submit" value="Change scene file">
+    </form>
+    <div style="color:brown">
+      <strong><em>Incoming features</em></strong>
+      <ul>
+        <li>Light adjuster</li>
+        <li>Other features lol</li>
+      </ul>
+    </div>
+    <form>
+      <table>
+        <!-- <caption>Camera control</caption> -->
+        <thead>
+          <tr>
+            <th colspan="4">Camera Control</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">Perspective</td>
+          </tr>
+          <tr>
+            <td>Near:</td>
+            <td><input id="near" type="number" value="6" /></td>
+            <td>Far:</td>
+            <td><input id="far" type="number" value="15" /></td>
+          </tr>
+          <tr>
+            <td>Bottom</td>
+            <td><input id="bottom" type="number" value="-3" /></td>
+            <td>Top</td>
+            <td>
+              <input id="top" type="number" value="3" />
+            </td>
+          </tr>
+          <tr>
+            <td>Left</td>
+            <td><input id="left" type="number" value="-3" /></td>
+            <td>Right</td>
+            <td><input id="right" type="number" value="3" /></td>
+          </tr>
+          <tr>
+            <td colspan="4">
+              <select id="camera-type" onchange="typeChange()">
+                <option value="cam-dir" selected>Cam Location & Offset</option>
+                <option value="cam-place">Camera Place</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+        <tbody id="dir-f">
+          <tr>
+            <td>
+              <bold>Direction</bold>
+            </td>
+            <td><input id="nx0" type="number" value="0"></input></td>
+            <td><input id="ny0" type="number" value="0"></input></td>
+            <td><input id="nz0" type="number" value="1"></input></td>
+          </tr>
+          <tr>
+            <td>Location</td>
+            <td><input id="rx" type="number" value="0"></input></td>
+            <td><input id="ry" type="number" value="0"></input></td>
+            <td><input id="rz" type="number" value="20"></input></td>
+          </tr>
+        </tbody>
+        <tbody id="place-f" hidden>
+          <tr>
+            <td>
+              <bold>Camera</bold>
+            </td>
+            <td><input id="off0" type="number" value="0"></input></td>
+            <td><input id="off1" type="number" value="0"></input></td>
+            <td><input id="off2" type="number" value="20"></input></td>
+          </tr>
+          <tr>
+            <td>
+              <bold>Subject</bold>
+            </td>
+            <td><input id="o0" type="number" value="0"></input></td>
+            <td><input id="o1" type="number" value="0"></input></td>
+            <td><input id="o2" type="number" value="0"></input></td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <td colspan="4">
+              Normalized Results
+            </td>
+          </tr>
+          <tr>
+            <td>u</td>
+            <td><input id="ux" type="number" value="1" readonly></input></td>
+            <td><input id="uy" type="number" value="0" readonly></input></td>
+            <td><input id="uz" type="number" value="0" readonly></input></td>
+          </tr>
+          <tr>
+            <td>v</td>
+            <td><input id="vx" type="number" value="0" readonly></input></td>
+            <td><input id="vy" type="number" value="1" readonly></input></td>
+            <td><input id="vz" type="number" value="0" readonly></input></td>
+          </tr>
+          <tr>
+            <td>n</td>
+            <td><input id="nx" type="number" value="0" readonly></input></td>
+            <td><input id="ny" type="number" value="0" readonly></input></td>
+            <td><input id="nz" type="number" value="1" readonly></input></td>
+          </tr>
+        </tbody>
+      </table><br />
+      <input type="button" onclick="updateCamera()" value="Update camera!" /> <br /> <br />
+      <input type="button" value="Download PPM" onclick="downloadPPM()" />
+      <input type="button" value="View PPM" onclick="viewPPM()" />
+      <input type="button" value="Copy PPM" onclick="copyPPM()" />
+    </form>
+
+    <p id="ppm-view">
+    </p>
+  </div>
+  <script src="util.js"></script>
+  <script src="graphics.js"></script>
+  <script src="scene.js"></script>
+  <script src="jsondata.js"></script>
+  <script src="dots.js"></script>
+  <script src="src/ppm.js"></script>
+  <script src="src/ui.js"></script>
+  <script src="hw6.js"></script>
+</body>
+
+</html>

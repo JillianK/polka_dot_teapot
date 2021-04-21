@@ -63,9 +63,9 @@ var zBuffer = [];
 
 var cMatrix;
 
-var from  = sceneData.scene.camera.from;
+var CAMERA_from  = sceneData.scene.camera.from;
 //var from = [0,0,5];
-var to = sceneData.scene.camera.to;
+var CAMERA_to = sceneData.scene.camera.to;
 var near = sceneData.scene.camera.bounds[0];
 var far = sceneData.scene.camera.bounds[1];
 var p_right = sceneData.scene.camera.bounds[2]; 
@@ -96,6 +96,12 @@ var perspective_mat = [[2 * near / (p_right-p_left), 0, (p_right + p_left) / (p_
   [0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near)/ (far - near)],
   [0, 0, -1, 0]];
 
+const get_perspective_mat = () => [[2 * near / (p_right-p_left), 0, (p_right + p_left) / (p_right - p_left), 0],
+  [0, 2 * near / (p_top - p_bottom), (p_top + p_bottom) / (p_top - p_bottom), 0],
+  [0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near)/ (far - near)],
+  [0, 0, -1, 0]];
+
+
 
 function preload() {
   //texture_image = loadImage(localURL);
@@ -121,14 +127,40 @@ function setup() {
 
   //texture_image.loadPixels();
   
-  cMatrix = createCamMatrix(from, to);
+  cMatrix = createCamMatrix(CAMERA_from, CAMERA_to);
   print("camera matrix", cMatrix);
   print("perspective matrix", perspective_mat);
   console.log(teapot);
   print("texture image", texture_image);
 }
 
+function myredraw(){
+  createCanvas(p_width, p_height);
+  strokeWeight(1);
+  frameRate(1);
+  //background(0,0,0);
+
+  for(var i=0; i<NUM_SAMPLES; i++) {
+    frameBuffers[i] = [];
+    for(var j = 0; j < p_width; j++) {
+      frameBuffers[i][j] = [];
+      for(var k = 0; k < p_height; k++) {
+        frameBuffers[i][j][k] = [];
+      }
+    }
+  }
+  
+  cMatrix = createCamMatrix(CAMERA_from, CAMERA_to);
+  print("camera matrix", cMatrix);
+  print("perspective matrix", perspective_mat);
+  console.log(teapot);
+  print("texture image", texture_image);
+  redraw();
+}
+
 function draw() {
+  frameStart = Date.now();
+
   for(i = 0; i < NUM_SAMPLES; i++) {
     zBuffer[i] = zBufferArray(p_width,p_height);
   }
@@ -158,6 +190,9 @@ function draw() {
     }
   }
   updatePixels();
+  print("Render time: ", Date.now()-frameStart,'ms')
+
+  noLoop();
 }
 
 function createTransformationMatrix(transforms) {

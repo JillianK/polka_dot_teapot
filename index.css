@@ -1,0 +1,104 @@
+body {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+  }
+  label {display:block;}
+
+  textarea {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  div {
+    display:flex;
+    flex-direction:column;
+  }
+
+  p {
+    text-align: left;
+  }
+  input[type=number] {
+    width: 3em;
+  }
+
+  input[type=number]:read-only {
+    width:4em;
+  }
+
+  table {
+    text-align: center;
+    display: inline-block;
+  }
+
+  .cols {
+      display: flex;
+      flex-direction: row;
+  }
+
+  .rows {
+      display:flex;
+      flex-direction: column;
+  }
+  .hidden {
+      display: none;
+  }
+  .center {
+      align-items: center;
+      align-content: center;
+
+  }
+  .left {
+      align-content: left;
+  }
+  
+  form {
+    background-color: lightgray;
+    margin: 6px 0px 6px 0px;
+    padding:4px;
+    border: 2px solid black;
+  }
+
+  #camera-remote-bar {
+    position: fixed;
+    left:0px;
+    top: 45vh;
+    min-height: 10vh;
+    min-width:  10vh;
+  }
+
+ 
+#camera-remote {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 0.5fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "control-mode control-mode control-mode control-mode"
+    "control-turn-left control-up control-up control-turn-right"
+    "control-left control-center-left control-center-right control-right"
+    ". control-down control-down .";
+  min-height: 10vh;
+  min-width:  10vh;
+}
+
+.control-left { grid-area: control-left; }
+
+.control-right { grid-area: control-right; }
+
+.control-center-left { grid-area: control-center-left; }
+
+.control-center-right { grid-area: control-center-right; }
+
+.control-up { grid-area: control-up; }
+
+.control-down { grid-area: control-down; }
+
+.control-turn-right { grid-area: control-turn-right; }
+
+.control-turn-left { grid-area: control-turn-left; }
+
+.control-mode {grid-area: control-mode;}
+
+    
