@@ -272,15 +272,12 @@ function updateCamera() {
     let n0, r;
     if (document.getElementById("camera-type").value == "cam-dir") {
         console.log("dir+offset");
-        n0 = [help("nx0"), help("ny0"), help("nz0")];
-        r = [help("rx"), help("ry"), help("rz")];
+        const direction = [help("nx0"), help("ny0"), help("nz0")];
+        CAMERA_from  = [help("rx"), help("ry"), help("rz")];
+        CAMERA_to = [CAMERA_from[0]+help("nx0"), CAMERA_from[1]+help("ny0"), CAMERA_from[2]+help("nz0")]
     } else {
-        let cam = [help("off0"), help("off1"), help("off2")];
-        let origin = [help("o0"), help("o1"), help("o2")];
-        n0 = math.subtract(cam, origin);
-        r = [help("off0"), help("off1"), help("off2")];
-        console.log(n0, r);
-
+        CAMERA_from = [help("off0"), help("off1"), help("off2")];
+        CAMERA_to = [help("o0"), help("o1"), help("o2")];
     }
 
     let n = math.divide(n0, math.norm(n0));
@@ -298,7 +295,7 @@ function updateCamera() {
     ];
     camera_matrix = _camera_matrix(camera);
 
-    raw_persp = ["left", "right", "bottom", "top", "near", "far"].map(help);
+    [p_left,p_right,p_bottom,p_top,near,far] = ["left", "right", "bottom", "top", "near", "far"].map(help);
     myredraw();
 }
 
@@ -308,13 +305,14 @@ function changeShader(e) {
     const form = (document.getElementById("shader"));
     switch (form.elements["shader"].value) {
         case "phong":
-            state.myshader = phongShader;
+            goraud = false;
             break;
         case "goraud":
-            state.myshader = goraudShader;
+            goraud = true;
             break;
         default:
-            state.myshader = defaultShader;
+            // state.myshader = defaultShader;
+            // Maybe todo?
     }
     myredraw();
 }
@@ -337,5 +335,10 @@ function switchRemoteMode() {
 
 function remote(button) {
     remoteControls[remoteControls.state][button]();
+    myredraw();
+}
+
+function updateTextureMap(){
+    texture_image = getDots();
     myredraw();
 }

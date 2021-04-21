@@ -96,6 +96,12 @@ var perspective_mat = [[2 * near / (p_right-p_left), 0, (p_right + p_left) / (p_
   [0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near)/ (far - near)],
   [0, 0, -1, 0]];
 
+const get_perspective_mat = () => [[2 * near / (p_right-p_left), 0, (p_right + p_left) / (p_right - p_left), 0],
+  [0, 2 * near / (p_top - p_bottom), (p_top + p_bottom) / (p_top - p_bottom), 0],
+  [0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near)/ (far - near)],
+  [0, 0, -1, 0]];
+
+
 
 function preload() {
   //texture_image = loadImage(localURL);
@@ -143,8 +149,6 @@ function myredraw(){
       }
     }
   }
-
-  texture_image.loadPixels();
   
   cMatrix = createCamMatrix(CAMERA_from, CAMERA_to);
   print("camera matrix", cMatrix);
@@ -184,6 +188,7 @@ function draw() {
     }
   }
   updatePixels();
+  noLoop();
 }
 
 function createTransformationMatrix(transforms) {
