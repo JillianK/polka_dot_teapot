@@ -484,3 +484,37 @@ function getDots() {
   return txtmp;
   
 }
+
+
+function getPointilism() {
+  inittxtmp()
+  clear()
+  const minSpace = document.getElementById("point_min_space").value
+  const maxSpace = document.getElementById("point_max_space").value
+  const minSize = document.getElementById("point_min_size").value
+  const maxSize = document.getElementById("point_max_size").value
+  for (let x = 0; x < pointilism_img.width; x+= int(random(minSpace,maxSpace))) {
+    for (let y = 0; y < pointilism_img.height; y += int(random(minSpace,maxSpace))) {
+      const loc = (x + y * pointilism_img.width) * 4
+      const r = pointilism_img.pixels[loc]
+      const g = pointilism_img.pixels[loc + 1]
+      const b = pointilism_img.pixels[loc + 2]
+      noStroke()
+      fill(r,g,b,100)
+      const size = int(random(minSize, maxSize))
+      const scalingFactor = 2
+      ellipse(x / (pointilism_img.width / (sz / scalingFactor)),y / (pointilism_img.height / (sz / scalingFactor)),size / (pointilism_img.width / (sz / scalingFactor)),size / (pointilism_img.height / (sz / scalingFactor)))
+    }
+  }
+  const ctx = document.getElementById('defaultCanvas0').getContext('2d')
+  for (let x = 0; x < sz; x++) {
+    for (let y = 0; y < sz; y++) {
+      const pixel = ctx.getImageData(x, y, 1, 1).data
+      txtmp[x][y][0] = pixel[0]
+      txtmp[x][y][1] = pixel[1]
+      txtmp[x][y][2] = pixel[2]
+    }
+  }
+  // throw new Error() /* uncomment this for debugging purposes to see the pointilism image */
+  return txtmp
+}
