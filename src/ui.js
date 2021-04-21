@@ -342,3 +342,12 @@ function updateTextureMap(){
     texture_image = getDots();
     myredraw();
 }
+
+function pointilism() {
+    loadImage(document.getElementById("point_img_url").value, function(img) {
+        pointilism_img = img
+        img.loadPixels()
+        texture_image = getPointilism()
+        myredraw()
+    });
+}

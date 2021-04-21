@@ -101,6 +101,7 @@ const get_perspective_mat = () => [[2 * near / (p_right-p_left), 0, (p_right + p
   [0, 0, -1 * (far + near) / (far - near), -1 * (2 * far * near)/ (far - near)],
   [0, 0, -1, 0]];
 
+let pointilism_img
 
 
 function preload() {
