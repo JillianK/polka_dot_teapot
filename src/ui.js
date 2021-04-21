@@ -305,10 +305,10 @@ function changeShader(e) {
     const form = (document.getElementById("shader"));
     switch (form.elements["shader"].value) {
         case "phong":
-            goraud = false;
+            gourad = false;
             break;
         case "goraud":
-            goraud = true;
+            gourad = true;
             break;
         default:
             // state.myshader = defaultShader;

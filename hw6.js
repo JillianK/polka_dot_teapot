@@ -159,6 +159,8 @@ function myredraw(){
 }
 
 function draw() {
+  frameStart = Date.now();
+
   for(i = 0; i < NUM_SAMPLES; i++) {
     zBuffer[i] = zBufferArray(p_width,p_height);
   }
@@ -188,6 +190,8 @@ function draw() {
     }
   }
   updatePixels();
+  print("Render time: ", Date.now()-frameStart,'ms')
+
   noLoop();
 }
 
