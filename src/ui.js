@@ -244,6 +244,16 @@ function dotgradientchanged(value) {
     updateDots();
 }
 
+function bumpmapchanged(value) {
+    if(value == "on") {
+        useBumpMap = true;
+    }
+    else {
+        useBumpMap = false;
+    }
+    updateDots();
+}
+
 function updateDots() {
     let basecolor = document.getElementById("basecolor").value;
     let mindot = document.getElementById("mindotsize").value;

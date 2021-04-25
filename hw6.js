@@ -84,10 +84,13 @@ var Kt = 0.7;
 
 //use to switch between gourad and phong shading
 //true = use gourad, false = use phong
-let gourad = true;
+let gourad = false;
 //use to switch between textures and flat coloring
 //true = use textures, false = use material colors
 var useTextures = true;
+
+//use to switch between bump mapping on and off
+let useBumpMap = false;
 
 var localURL = 'assets/logo.jpg';
 
@@ -114,6 +117,7 @@ function setup() {
   createCanvas(p_width, p_height);
   strokeWeight(1);
   frameRate(1);
+  //testSuite();
   //background(0,0,0);
 
   for(var i=0; i<NUM_SAMPLES; i++) {
@@ -133,6 +137,7 @@ function setup() {
   print("perspective matrix", perspective_mat);
   console.log(teapot);
   print("texture image", texture_image);
+  //print("bumpMap normals", normalmp);
 }
 
 function myredraw(){
@@ -234,6 +239,29 @@ function createCamMatrix(camR, to) {
     [0, 0, 0, 1]];
 
   return camMat;
+}
+
+//Bump Mapping Function.
+function perturbNormal(originalN, bumpNorm) {
+  let normN = originalN;
+  let normV = [0,1,0];
+  let normU = cross(normV, normN);
+  normV = cross(normN, normU);
+  /*let normalSpaceMatrix = math.matrix([[normU[0], normU[1], normU[2], 0],
+    [normV[0], normV[1], normV[2], 0],
+    [normN[0], normN[1], normN[2], 0],
+    [0, 0, 0, 1]]);
+  let normalInverseMatrix = math.inv(normalSpaceMatrix);
+  let normalInverseData = normalInverseMatrix._data;
+  //let identity_hopefully = four_by_four_mult(normalSpaceMatrix._data, normalInverseData);
+  let perturbedNorm = matrix_mult(normalInverseData, bumpNorm);
+  */
+  let perturbedNorm = [bumpNorm[0] * normU[0] + bumpNorm[1] * normV[0] + bumpNorm[2] * normN[0],
+                       bumpNorm[0] * normU[1] + bumpNorm[1] * normV[1] + bumpNorm[2] * normN[1],
+                       bumpNorm[0] * normU[2] + bumpNorm[1] * normV[2] + bumpNorm[2] * normN[2]];
+  
+  
+  return perturbedNorm;
 }
 
 function convertCoordinates(vertex, worldTransform, transforms) {

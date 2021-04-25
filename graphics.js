@@ -71,9 +71,12 @@ function calculateGraphics(x, y, v0, v1, v2, t_alpha, t_beta, t_gamma, v0Light, 
     var interpolated_normal = [v0.world_n[0] * t_alpha + v1.world_n[0] * t_beta + v2.world_n[0] * t_gamma,
                                v0.world_n[1] * t_alpha + v1.world_n[1] * t_beta + v2.world_n[1] * t_gamma,
                                v0.world_n[2] * t_alpha + v1.world_n[2] * t_beta + v2.world_n[2] * t_gamma, 1];
-    var phong_light_values = computeTriangleLighting(interpolated_normal, material);
-    var phong_combined = addVectors(phong_light_values.ambient, addVectors(phong_light_values.diffuse, phong_light_values.specular));
-    light_RGB = scaleVector(phong_combined, 255);
+    var phong_light_values = computeTriangleLighting(interpolated_normal, material, uv_values);
+    //var phong_combined = addVectors(phong_light_values.ambient, addVectors(phong_light_values.diffuse, phong_light_values.specular));
+    light_RGB = [(phong_light_values.ambient[0] + phong_light_values.diffuse[0] + phong_light_values.specular[0]) * 255,
+                 (phong_light_values.ambient[1] + phong_light_values.diffuse[1] + phong_light_values.specular[1]) * 255,
+                 (phong_light_values.ambient[2] + phong_light_values.diffuse[2] + phong_light_values.specular[2]) * 255];
+    //light_RGB = scaleVector(phong_combined, 255);
     
   }
 
@@ -159,7 +162,22 @@ function computeTriangleRGB(light_C, colorVal) {
 }
 
 //compute the lighting of the triangle
-function computeTriangleLighting(normal, material) {
+function computeTriangleLighting(normalVec, material, uv_values) {
+
+  var normal = normalVec;
+  if(useBumpMap == true) {
+    var u = uv_values[0];
+    var v = uv_values[1];
+    var unalteredX = (1-u) * (sz - 1);
+    var unalteredY = v * (sz - 1);
+    var xLocation = floor(unalteredX);
+    var yLocation = floor(unalteredY);
+    var displacementVec = normalmp[xLocation][yLocation];
+    if(displacementVec != [0,0,1,1]) {
+      normal = perturbNormal(normalVec, displacementVec);
+    }
+  }
+  
 
   var Ka = material.Ka;
   var Kd = material.Kd;

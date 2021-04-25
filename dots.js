@@ -19,6 +19,11 @@ let radialmode = "none"
 
 let txtmp;
 
+
+//bump mapping variables
+var normalmp;
+var radiusRatio = 1.4;
+
 // source: https://javascript.plainenglish.io/convert-hex-to-rgb-with-javascript-4984d16219c3
 
 function hextorgb(hexcolor) {
@@ -367,6 +372,7 @@ function setTextureMapPixelWithGradient(r0, g0, b0, r1, g1, b1, x0, y0, x, y, ra
   if (g0 == g1) {color[1] = g0;}
   if (b0 == b1) {color[2] = b0;} 
   setTextureMapPixel(x, y, color[0], color[1], color[2]);
+  setBumpMapNormal(x, y, x0, y0, radius);
 }
 
 function setTextureMapPixel(x, y, rr, gg, bb) {
@@ -380,17 +386,40 @@ function setTextureMapPixel(x, y, rr, gg, bb) {
   txtmp[Math.floor(x)][Math.floor(y)][2] = bb;
 }
 
+/*
+Assumes the center of the sphere to be at x0, y0, z0=0, the using x, y, x0, y0
+calculates the normal vector for the point x, y. 
+*/
+function setBumpMapNormal(x, y, x0, y0, radius) {
+  var sphereRadius = radius * radiusRatio;
+  var radiusSquared = Math.pow(sphereRadius, 2);
+  var xDiff = x - x0;
+  var xDiffSquared = Math.pow(xDiff, 2);
+  var yDiff = y - y0;
+  var yDiffSquared = Math.pow(yDiff, 2);
+  var sphereEdgeZ = Math.sqrt(radiusSquared - xDiffSquared - yDiffSquared);
+  var bumpNormal = unitize([xDiff, yDiff, sphereEdgeZ]);
+  normalmp[Math.floor(x)][Math.floor(y)][0] = bumpNormal[0];
+  normalmp[Math.floor(x)][Math.floor(y)][1] = bumpNormal[1];
+  normalmp[Math.floor(x)][Math.floor(y)][2] = bumpNormal[2];
+  normalmp[Math.floor(x)][Math.floor(y)][3] = 1;
+}
+
 function inittxtmp() {
-  let tm = []
-  
+  let tm = [];
+  let nm = [];
   for (let i = 0; i < sz; i++) {
     let row = [];
+    let normalrow = [];
     for (let j = 0; j < sz; j++) {
       row.push([basecolor[0], basecolor[1], basecolor[2]]);
+      normalrow.push([0,0,1,1]);
     }
     tm.push(row);
+    nm.push(normalrow);
   }
   txtmp = tm;
+  normalmp = nm;
 }
 
 function random(min, max) { 
