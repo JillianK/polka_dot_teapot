@@ -1,5 +1,4 @@
 let sz = 512;
-let txtmap;
 let pixelSparsenessFactor = 0.4;
 let minamountofcirclesontexturemap = 2;
 // this is the MAX max size we should allow a user to pick for the circles, 
@@ -13,7 +12,8 @@ let paddingFactor = 5;
 let colorList = [
     [255, 0, 0]
 ]
-let basecolor = [255, 255, 255];
+var basecolor = [255, 255, 255, 255];
+var seethru = false;
 
 let radialmode = "none"
 
@@ -32,7 +32,8 @@ function hextorgb(hexcolor) {
     let rgb = [
         parseInt(rgb_hex[0], 16),
         parseInt(rgb_hex[1], 16),
-        parseInt(rgb_hex[2], 16)
+        parseInt(rgb_hex[2], 16),
+        seethru?0:255
     ];
     return rgb;
 }
@@ -51,7 +52,7 @@ function changesettings(minsize0, maxsize0, paddingFactor0, colors, basecolor0) 
     newColorList.push(rgb);
   }
   colorList = newColorList;
-  basecolor = hextorgb(basecolor0)
+  basecolor = hextorgb(basecolor0);
 }
 
 function preload() {
@@ -60,7 +61,7 @@ function preload() {
 
 function drawLine(X1, Y1, X2, Y2, r, g, b, r2, g2, b2, radius){
   if(Math.abs(X1-X2)<1) {
-    vertical(X1, Y1, Y2, r, g, b,r2, g2, b2, radius);
+    vertical(X1, Y1, Y2, r, g, b, r2, g2, b2, radius);
   }
   if(Math.abs(Y1-Y2)<2) {
     horizontal(X1, X2, Y1, r, g, b, r2, g2, b2,radius);
@@ -354,16 +355,10 @@ function getcolor(r0, g0, b0, r1, b1, g1, x0, y0, x1, y1, radius) {
   const xDist = x0 - x1;
   const yDist = y0 - y1;
   const dist = Math.pow( Math.pow(xDist, 2) + Math.pow(yDist, 2), 0.5);
-  let t = dist/radius;
+  const t = dist/radius;
 
   // https://www.alanzucconi.com/2016/01/06/colour-interpolation/
-
-  let newr = r0/255.0 + (r1/255.0 - r0/255.0)*t;
-  let newg = g0/255.0 + (g1/255.0 - g0/255.0)*t;
-  let newb = b0/255.0 + (b1/255.0 - b0/255.0)*t;
-
-  return [newr*255, newg*255, newb*255]
-
+  return [r0 + (r1 - r0)*t, g0 + (g1 - g0)*t, b0 + (b1 - b0)*t];
 }
 
 function setTextureMapPixelWithGradient(r0, g0, b0, r1, g1, b1, x0, y0, x, y, radius) {
@@ -376,14 +371,13 @@ function setTextureMapPixelWithGradient(r0, g0, b0, r1, g1, b1, x0, y0, x, y, ra
 }
 
 function setTextureMapPixel(x, y, rr, gg, bb) {
-  if (x < 0) {x = 0}
-  if (y < 0) {y = 0}
-  if (x > sz-1) {x = sz-1}
-  if (y > sz-1) {y = sz-1}
-
-  txtmp[Math.floor(x)][Math.floor(y)][0] = rr;
-  txtmp[Math.floor(x)][Math.floor(y)][1] = gg;
-  txtmp[Math.floor(x)][Math.floor(y)][2] = bb;
+  x = Math.floor(Math.max(0,Math.min(sz-1,x)))
+  y = Math.floor(Math.max(0,Math.min(sz-1,y)))
+  
+  txtmp[x][y][0] = rr;
+  txtmp[x][y][1] = gg;
+  txtmp[x][y][2] = bb;
+  txtmp[x][y][3] = 255;
 }
 
 /*
@@ -406,17 +400,15 @@ function setBumpMapNormal(x, y, x0, y0, radius) {
 }
 
 function inittxtmp() {
-  let tm = [];
-  let nm = [];
+  let tm = txtmp||new Array(sz);
+  let nm = normalmp||new Array(sz);
   for (let i = 0; i < sz; i++) {
-    let row = [];
-    let normalrow = [];
+    tm[i] = tm[i]||new Array(sz);
+    nm[i] = nm[i]||new Array(sz);
     for (let j = 0; j < sz; j++) {
-      row.push([basecolor[0], basecolor[1], basecolor[2]]);
-      normalrow.push([0,0,1,1]);
+      tm[i][j] = basecolor.slice();
+      nm[i][j] = [0.0,0.0,1.0,1.0];
     }
-    tm.push(row);
-    nm.push(normalrow);
   }
   txtmp = tm;
   normalmp = nm;
@@ -511,7 +503,6 @@ function getDots() {
     }
   }
   return txtmp;
-  
 }
 
 
@@ -539,9 +530,7 @@ function getPointilism() {
   for (let x = 0; x < sz; x++) {
     for (let y = 0; y < sz; y++) {
       const pixel = ctx.getImageData(x, y, 1, 1).data
-      txtmp[x][y][0] = pixel[0]
-      txtmp[x][y][1] = pixel[1]
-      txtmp[x][y][2] = pixel[2]
+      txtmp[x][y] = pixel.slice(0,3)
     }
   }
   // throw new Error() /* uncomment this for debugging purposes to see the pointilism image */

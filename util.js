@@ -9,7 +9,7 @@ function dot(v1, v2) {
 
 function multiplyVectors(vec1, vec2) {
   var multiplied_vec = [];
-  for(var i in vec1) {
+  for(let i = 0; i < vec1.length; i++) {
     multiplied_vec[i] = vec1[i] * vec2[i];
   }
   return multiplied_vec;
@@ -17,7 +17,7 @@ function multiplyVectors(vec1, vec2) {
   
 //calculate R 
 function calculateR(normal, L) {
-  var scalar = 2 * dot(normal, L);
+  var scalar = 2.0 * dot(normal, L);
   var scaled_N = [scalar * normal[0], scalar * normal[1], scalar * normal[2]];
   var calculated_R = [scaled_N[0] - L[0], scaled_N[1] - L[1], scaled_N[2] - L[2]];
   return calculated_R;
@@ -25,7 +25,7 @@ function calculateR(normal, L) {
   
 function scaleVector(vec, s) {
   var scaled_Vec = [];
-  for(var i in vec) {
+  for(let i = 0; i < vec.length; i++) {
     scaled_Vec[i] = vec[i] * s;
   }
   return scaled_Vec;
@@ -33,10 +33,18 @@ function scaleVector(vec, s) {
   
 function addVectors(vec1, vec2) {
   var added_Vec = [];
-  for(var i in vec1) {
+  for(let i = 0; i < vec1.length; i++) {
     added_Vec[i] = vec1[i] + vec2[i];
   }
   return added_Vec;
+}
+
+function addVectorsMut(vec1, vec2) {
+
+  for(let i = 0; i < vec1.length; i++) {
+    vec1[i] += vec2[i];
+  }
+  return vec1;
 }
 
 function toRadians(degree) {
@@ -135,19 +143,20 @@ function matrix_mult(m1,m2) {
 function getInverseTranspose(transforms) {
   let S = transforms[1].S;
   let Ry = toRadians(transforms[0].Ry);
-  var sMat = [[1/S[0],0,0,0], [0,1/S[1],0,0], [0,0,1/S[2],0],[0,0,0,1]];
-  let yRotMat = [[Math.cos(Ry), 0, Math.sin(Ry), 0],
-                 [0, 1, 0, 0],
-                 [-1 * Math.sin(Ry), 0, Math.cos(Ry), 0],
-                 [0, 0, 0, 1]];
+  var sMat = [[1.0/S[0],0.0,0.0,0.0], [0.0,1.0/S[1],0.0,0.0], [0.0,0.0,1.0/S[2],0.0],[0.0,0.0,0.0,1.0]];
+  let yRotMat = [[Math.cos(Ry), 0.0, Math.sin(Ry), 0.0],
+                 [0.0, 1.0, 0.0, 0.0],
+                 [-1.0 * Math.sin(Ry), 0.0, Math.cos(Ry), 0.0],
+                 [0.0, 0.0, 0.0, 1]];
   let inverseSR = four_by_four_mult(yRotMat, sMat);
   return inverseSR;
 }
 
 function combineWeightedRGB(x, y) {
-  var pixelRGB = [0.0, 0.0, 0.0];
+  var pixelRGB = [0.0, 0.0, 0.0, 0.0];
   for(i=0; i < NUM_SAMPLES; i++) {
-    var unscaledSample = frameBuffers[i][x][y];
+    const ix = ((i*width+x)*height+y)*4;
+    var unscaledSample = frameBuffers.subarray(ix,ix+4);
     if(unscaledSample.length > 0) {
       var scaledSample = scaleVector(unscaledSample, aaFilter[i][2]);
       pixelRGB = addVectors(pixelRGB, scaledSample);

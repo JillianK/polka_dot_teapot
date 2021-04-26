@@ -173,7 +173,41 @@ document.getElementById("numcolors").addEventListener("change", (e) => {
 });
 document.getElementById("dotspacing").addEventListener("change", updateDots);
 document.getElementById("maxdotsize").max = maxsizetoavoidoverflow;
+var pressTimer;
+function keyTyped(){
+    switch (key){
+        case "a":
+            remoteControls.ROT.left();
+            myredraw()
+            break;
+        case "d":
+            remoteControls.ROT.right();
+            myredraw()
+            break;
+        case "w":
+            remoteControls.ROT.up();
+            myredraw()
+            break;
+        case "s":
+            remoteControls.ROT.down();
+            myredraw()
+            break;
+        default:
+            //do nothing
+    }
+    return false;
+};
 
+document.getElementsByTagName("canvas")[0].addEventListener("keydown", ()=>{
+    if (presstimer !== null) {
+        clearTimeout(presstimer);
+        presstimer = null;
+    }
+
+    this.classList.remove("longpress");
+    // Clear timeout
+    return false;
+} )
 
 /**
  * 
@@ -256,6 +290,7 @@ function bumpmapchanged(value) {
 
 function updateDots() {
     let basecolor = document.getElementById("basecolor").value;
+    seethru= document.getElementById("basecolor-alpha").checked;
     let mindot = document.getElementById("mindotsize").value;
     let maxdot = document.getElementById("maxdotsize").value;
     let dotspacing = document.getElementById("dotspacing").value;
