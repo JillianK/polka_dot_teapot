@@ -174,36 +174,31 @@ document.getElementById("numcolors").addEventListener("change", (e) => {
 document.getElementById("dotspacing").addEventListener("change", updateDots);
 document.getElementById("maxdotsize").max = maxsizetoavoidoverflow;
 var pressTimer;
-document.getElementsByTagName("main")[0].addEventListener("keyup", (/** KeyboardEvent*/event) => {
-    console.log('Pressed');
-    const callback = ()=>{
-        switch (event.code){
-            case "ArrowLeft":
-                remoteControls.ROT.left();
-                redraw()
-                break;
-            case "ArrowRight":
-                remoteControls.ROT.right();
-                redraw()
-                break;
-            case "ArrowUp":
-                remoteControls.ROT.up();
-                redraw()
-                break;
-            case "ArrowDown":
-                remoteControls.ROT.down();
-                redraw()
-                return false;
-                break;
-            default:
-                return;
-        }
+function keyTyped(){
+    switch (key){
+        case "a":
+            remoteControls.ROT.left();
+            myredraw()
+            break;
+        case "d":
+            remoteControls.ROT.right();
+            myredraw()
+            break;
+        case "w":
+            remoteControls.ROT.up();
+            myredraw()
+            break;
+        case "s":
+            remoteControls.ROT.down();
+            myredraw()
+            break;
+        default:
+            //do nothing
     }
-    pressTimer = setTimeout(callback,500);
     return false;
-});
+};
 
-document.getElementsByTagName("main")[0].addEventListener("keydown", ()=>{
+document.getElementsByTagName("canvas")[0].addEventListener("keydown", ()=>{
     if (presstimer !== null) {
         clearTimeout(presstimer);
         presstimer = null;
@@ -295,6 +290,7 @@ function bumpmapchanged(value) {
 
 function updateDots() {
     let basecolor = document.getElementById("basecolor").value;
+    seethru= document.getElementById("basecolor-alpha").checked;
     let mindot = document.getElementById("mindotsize").value;
     let maxdot = document.getElementById("maxdotsize").value;
     let dotspacing = document.getElementById("dotspacing").value;

@@ -30,9 +30,12 @@ function scanTriangle(v0,v1,v2, material) {
           if(x >= 0 && x < p_width && y >= 0 && y < p_height) {
             var pixelZ = t_alpha * v0.v[i][2] + t_beta * v1.v[i][2] + t_gamma * v2.v[i][2];
             if(pixelZ < zBuffer[i][x*height+y]) {
-              zBuffer[i][x*height+y] = pixelZ;
+              const colors = calculateGraphics(x, y, v0, v1, v2, t_alpha, t_beta, t_gamma, v0Light, v1Light, v2Light, material);
+              if (colors[3] !== 0){
+                zBuffer[i][x*height+y] = pixelZ;
 
-              frameBuffers.set(calculateGraphics(x, y, v0, v1, v2, t_alpha, t_beta, t_gamma, v0Light, v1Light, v2Light, material),index);
+                frameBuffers.set(colors,index);
+              }
             }
           }
         }
@@ -86,7 +89,7 @@ function calculateGraphics(x, y, v0, v1, v2, t_alpha, t_beta, t_gamma, v0Light, 
   }
 
   //Combine light_RGB and texture values
-  return [light_RGB[0] + textureValues[0], light_RGB[1] + textureValues[1], light_RGB[2] + textureValues[2]]; 
+  return [light_RGB[0] + textureValues[0], light_RGB[1] + textureValues[1], light_RGB[2] + textureValues[2],unscaled_textures[3]]; 
   //Create and set color using final color values.
   //var c = color(RGB_c[0], RGB_c[1], RGB_c[2]);
   //setPixel(x,y,c);
@@ -155,11 +158,13 @@ function textureLookup(u,v,texmap) {
   var p11 = texmap[1+xLocation][1+yLocation];// top-right (diagonal)
 
   
-  var p0010RGB = [p00[0] + f*(p10[0]-p00[0]),p00[1] + f*(p10[1]-p00[1]), p00[2] + f*(p10[2]-p00[2])];
-  var p0111RGB = [p01[0] + f*(p11[0]-p01[0]), p01[1] + f*(p11[1]-p01[1]), p01[2] + f*(p11[2]-p01[2])];
+  var p0010RGB = [p00[0] + f*(p10[0]-p00[0]),p00[1] + f*(p10[1]-p00[1]), p00[2] + f*(p10[2]-p00[2]),p00[3] + f*(p10[3]-p00[3])];
+  var p0111RGB = [p01[0] + f*(p11[0]-p01[0]), p01[1] + f*(p11[1]-p01[1]), p01[2] + f*(p11[2]-p01[2]),p01[3] + f*(p11[3]-p01[3])];
   return [p0010RGB[0] + g * (p0111RGB[0] - p0010RGB[0]),
   p0010RGB[1] + g * (p0111RGB[1] - p0010RGB[1]),
-  p0010RGB[2] + g * (p0111RGB[2] - p0010RGB[2])];
+  p0010RGB[2] + g * (p0111RGB[2] - p0010RGB[2]),
+  p0010RGB[3] + g * (p0111RGB[3] - p0010RGB[3]),
+  ];
 }
 
 //convert light to RGB value
