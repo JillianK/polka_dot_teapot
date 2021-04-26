@@ -9,7 +9,7 @@ function dot(v1, v2) {
 
 function multiplyVectors(vec1, vec2) {
   var multiplied_vec = [];
-  for(var i in vec1) {
+  for(let i = 0; i < vec1.length; i++) {
     multiplied_vec[i] = vec1[i] * vec2[i];
   }
   return multiplied_vec;
@@ -25,7 +25,7 @@ function calculateR(normal, L) {
   
 function scaleVector(vec, s) {
   var scaled_Vec = [];
-  for(var i in vec) {
+  for(let i = 0; i < vec.length; i++) {
     scaled_Vec[i] = vec[i] * s;
   }
   return scaled_Vec;
@@ -33,10 +33,18 @@ function scaleVector(vec, s) {
   
 function addVectors(vec1, vec2) {
   var added_Vec = [];
-  for(var i in vec1) {
+  for(let i = 0; i < vec1.length; i++) {
     added_Vec[i] = vec1[i] + vec2[i];
   }
   return added_Vec;
+}
+
+function addVectorsMut(vec1, vec2) {
+
+  for(let i = 0; i < vec1.length; i++) {
+    vec1[i] += vec2[i];
+  }
+  return vec1;
 }
 
 function toRadians(degree) {
@@ -147,7 +155,8 @@ function getInverseTranspose(transforms) {
 function combineWeightedRGB(x, y) {
   var pixelRGB = [0.0, 0.0, 0.0];
   for(i=0; i < NUM_SAMPLES; i++) {
-    var unscaledSample = frameBuffers[i][x][y];
+    const ix = ((i*width+x)*height+y)*4;
+    var unscaledSample = frameBuffers.subarray(ix,ix+3);
     if(unscaledSample.length > 0) {
       var scaledSample = scaleVector(unscaledSample, aaFilter[i][2]);
       pixelRGB = addVectors(pixelRGB, scaledSample);
