@@ -156,7 +156,7 @@ function combineWeightedRGB(x, y) {
   var pixelRGB = [0.0, 0.0, 0.0, 0.0];
   for(i=0; i < NUM_SAMPLES; i++) {
     const ix = ((i*width+x)*height+y)*4;
-    var unscaledSample = frameBuffers.subarray(ix,ix+3);
+    var unscaledSample = frameBuffers.subarray(ix,ix+4);
     if(unscaledSample.length > 0) {
       var scaledSample = scaleVector(unscaledSample, aaFilter[i][2]);
       pixelRGB = addVectors(pixelRGB, scaledSample);
