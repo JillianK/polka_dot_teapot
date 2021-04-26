@@ -17,7 +17,7 @@ function multiplyVectors(vec1, vec2) {
   
 //calculate R 
 function calculateR(normal, L) {
-  var scalar = 2 * dot(normal, L);
+  var scalar = 2.0 * dot(normal, L);
   var scaled_N = [scalar * normal[0], scalar * normal[1], scalar * normal[2]];
   var calculated_R = [scaled_N[0] - L[0], scaled_N[1] - L[1], scaled_N[2] - L[2]];
   return calculated_R;
@@ -143,11 +143,11 @@ function matrix_mult(m1,m2) {
 function getInverseTranspose(transforms) {
   let S = transforms[1].S;
   let Ry = toRadians(transforms[0].Ry);
-  var sMat = [[1/S[0],0,0,0], [0,1/S[1],0,0], [0,0,1/S[2],0],[0,0,0,1]];
-  let yRotMat = [[Math.cos(Ry), 0, Math.sin(Ry), 0],
-                 [0, 1, 0, 0],
-                 [-1 * Math.sin(Ry), 0, Math.cos(Ry), 0],
-                 [0, 0, 0, 1]];
+  var sMat = [[1.0/S[0],0.0,0.0,0.0], [0.0,1.0/S[1],0.0,0.0], [0.0,0.0,1.0/S[2],0.0],[0.0,0.0,0.0,1.0]];
+  let yRotMat = [[Math.cos(Ry), 0.0, Math.sin(Ry), 0.0],
+                 [0.0, 1.0, 0.0, 0.0],
+                 [-1.0 * Math.sin(Ry), 0.0, Math.cos(Ry), 0.0],
+                 [0.0, 0.0, 0.0, 1]];
   let inverseSR = four_by_four_mult(yRotMat, sMat);
   return inverseSR;
 }
