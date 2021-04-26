@@ -400,17 +400,15 @@ function setBumpMapNormal(x, y, x0, y0, radius) {
 }
 
 function inittxtmp() {
-  let tm = [];
-  let nm = [];
+  let tm = new Array(sz);
+  let nm = new Array(sz);
   for (let i = 0; i < sz; i++) {
-    let row = [];
-    let normalrow = [];
+    tm[i] = new Array(sz);
+    nm[i] = new Array(sz);
     for (let j = 0; j < sz; j++) {
-      row.push(basecolor.slice());
-      normalrow.push([0,0,1,1]);
+      tm[i][j] = basecolor.slice();
+      nm[i][j] = [0,0,1,1];
     }
-    tm.push(row);
-    nm.push(normalrow);
   }
   txtmp = tm;
   normalmp = nm;
@@ -505,7 +503,6 @@ function getDots() {
     }
   }
   return txtmp;
-  
 }
 
 
