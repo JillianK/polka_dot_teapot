@@ -400,14 +400,14 @@ function setBumpMapNormal(x, y, x0, y0, radius) {
 }
 
 function inittxtmp() {
-  let tm = new Array(sz);
-  let nm = new Array(sz);
+  let tm = txtmp||new Array(sz);
+  let nm = normalmp||new Array(sz);
   for (let i = 0; i < sz; i++) {
-    tm[i] = new Array(sz);
-    nm[i] = new Array(sz);
+    tm[i] = tm[i]||new Array(sz);
+    nm[i] = nm[i]||new Array(sz);
     for (let j = 0; j < sz; j++) {
       tm[i][j] = basecolor.slice();
-      nm[i][j] = [0,0,1,1];
+      nm[i][j] = [0.0,0.0,1.0,1.0];
     }
   }
   txtmp = tm;
