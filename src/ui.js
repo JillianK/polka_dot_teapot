@@ -173,7 +173,46 @@ document.getElementById("numcolors").addEventListener("change", (e) => {
 });
 document.getElementById("dotspacing").addEventListener("change", updateDots);
 document.getElementById("maxdotsize").max = maxsizetoavoidoverflow;
+var pressTimer;
+document.getElementsByTagName("main")[0].addEventListener("keyup", (/** KeyboardEvent*/event) => {
+    console.log('Pressed');
+    const callback = ()=>{
+        switch (event.code){
+            case "ArrowLeft":
+                remoteControls.ROT.left();
+                redraw()
+                break;
+            case "ArrowRight":
+                remoteControls.ROT.right();
+                redraw()
+                break;
+            case "ArrowUp":
+                remoteControls.ROT.up();
+                redraw()
+                break;
+            case "ArrowDown":
+                remoteControls.ROT.down();
+                redraw()
+                return false;
+                break;
+            default:
+                return;
+        }
+    }
+    pressTimer = setTimeout(callback,500);
+    return false;
+});
 
+document.getElementsByTagName("main")[0].addEventListener("keydown", ()=>{
+    if (presstimer !== null) {
+        clearTimeout(presstimer);
+        presstimer = null;
+    }
+
+    this.classList.remove("longpress");
+    // Clear timeout
+    return false;
+} )
 
 /**
  * 
