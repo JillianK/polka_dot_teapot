@@ -1,5 +1,4 @@
 let sz = 512;
-let txtmap;
 let pixelSparsenessFactor = 0.4;
 let minamountofcirclesontexturemap = 2;
 // this is the MAX max size we should allow a user to pick for the circles, 
@@ -524,7 +523,7 @@ function getPointilism() {
       const g = pointilism_img.pixels[loc + 1]
       const b = pointilism_img.pixels[loc + 2]
       noStroke()
-      fill(r,g,b,255)
+      fill(r,g,b,100)
       const size = int(random(minSize, maxSize))
       const scalingFactor = 2
       ellipse(x / (pointilism_img.width / (sz / scalingFactor)),y / (pointilism_img.height / (sz / scalingFactor)),size / (pointilism_img.width / (sz / scalingFactor)),size / (pointilism_img.height / (sz / scalingFactor)))
