@@ -533,7 +533,7 @@ function getPointilism() {
   for (let x = 0; x < sz; x++) {
     for (let y = 0; y < sz; y++) {
       const pixel = ctx.getImageData(x, y, 1, 1).data
-      txtmp[x][y] = pixel.slice()
+      txtmp[x][y] = pixel.slice(0,3)
     }
   }
   // throw new Error() /* uncomment this for debugging purposes to see the pointilism image */
