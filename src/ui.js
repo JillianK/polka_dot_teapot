@@ -101,8 +101,6 @@ const remoteControls = {
     }
 };
 
-document.getElementById("asc-forms").addEventListener("submit", addASCFile);
-document.getElementById("scene-forms").addEventListener("submit", changeSceneFile);
 document.getElementById("camera-remote").addEventListener("submit", suppressDefault);
 document.getElementById("mindotsize").addEventListener("change", (e) => {
     suppressDefault(e);
@@ -195,19 +193,8 @@ function keyTyped(){
         default:
             //do nothing
     }
-    return false;
+    return true;
 };
-
-document.getElementsByTagName("canvas")[0].addEventListener("keydown", ()=>{
-    if (presstimer !== null) {
-        clearTimeout(presstimer);
-        presstimer = null;
-    }
-
-    this.classList.remove("longpress");
-    // Clear timeout
-    return false;
-} )
 
 /**
  * 
